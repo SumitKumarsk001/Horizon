@@ -150,6 +150,9 @@ Inspired by a modern fintech dashboard design with:
 - Responsive layout
 - Enterprise dashboard architecture
 
+# Progress 
+<img width="638" height="301" alt="image" src="https://github.com/user-attachments/assets/0fa11aab-1390-49a1-bfb9-01cb93bf5c36" />
+
 ---
 
 # 📅 Upcoming (Day 2)
