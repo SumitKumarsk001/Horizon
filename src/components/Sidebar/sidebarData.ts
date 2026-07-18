@@ -12,32 +12,32 @@ import {
 export const sidebarItems = [
   {
     title: "Dashboard",
-    path: "/",
+    path: "/dashboard",
     icon: FiHome,
   },
   {
     title: "Cards",
-    path: "/cards",
+    path: "/dashboard/cards",
     icon: FiCreditCard,
   },
   {
     title: "Transactions",
-    path: "/transactions",
+    path: "/dashboard/transactions",
     icon: FiDollarSign,
   },
   {
     title: "Analytics",
-    path: "/analytics",
+    path: "/dashboard/analytics",
     icon: FiBarChart2,
   },
   {
     title: "Budget",
-    path: "/budget",
+    path: "/dashboard/budget",
     icon: FiPieChart,
   },
   {
     title: "Settings",
-    path: "/settings",
+    path: "/dashboard/settings",
     icon: FiSettings,
   },
  

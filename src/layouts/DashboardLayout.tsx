@@ -7,7 +7,8 @@ import Navbar from "../components/Navbar/Navbar";
 import Sidebar from "../components/Sidebar/Sidebar";
 
 const DashboardLayout = () => {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+  const [sidebarExpanded, setSidebarExpanded] = useState(isDesktop);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -15,8 +16,9 @@ const DashboardLayout = () => {
       const desktop = window.innerWidth >= 1024;
       const tablet = window.innerWidth >= 768;
 
+      setIsDesktop(desktop);
       setSidebarExpanded(desktop);
-      if (!tablet) {
+      if (!tablet || desktop) {
         setMobileOpen(false);
       }
     };
@@ -27,22 +29,24 @@ const DashboardLayout = () => {
   }, []);
 
   const toggleSidebar = () => {
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 1024) {
       setMobileOpen((prev) => !prev);
     } else {
       setSidebarExpanded((prev) => !prev);
     }
   };
 
+  const contentMargin = sidebarExpanded ? "lg:ml-[260px]" : "lg:ml-[80px]";
+
   return (
-    <div className="min-h-screen flex overflow-hidden bg-slate-100">
+    <div className="min-h-screen flex overflow-hidden bg-gray-100 dark:bg-slate-900">
       <Sidebar
         isOpen={sidebarExpanded}
         mobileOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}
       />
 
-      <div className="flex-1 min-w-0">
+      <div className={`flex-1 min-w-0 flex flex-col transition-all duration-300 ${contentMargin}`}>
         <Navbar onMenuClick={toggleSidebar} />
 
         <main className="flex-1 overflow-auto p-6">
