@@ -166,6 +166,100 @@ Inspired by a modern fintech dashboard design with:
 - Settings Management
 
 ---
+# Project Horizon - Day 2
+
+## Overview
+On Day 2, the foundation of the dashboard UI was completed. The application structure was organized, routing was implemented, and the reusable layout components were created.
+
+## Tasks Completed
+
+### Project Structure
+- Organized project folders
+- Created reusable component architecture
+- Configured React Router
+
+### Layout Components
+- Sidebar
+- Top Navbar
+- Responsive Layout
+- Mobile Menu Toggle
+
+### Dashboard Page
+- Dashboard routing
+- Overview cards
+- Bank card section
+- Recent transactions section
+
+### Features
+- Responsive sidebar
+- Mobile-friendly navigation
+- Clean dashboard layout
+- TypeScript component structure
+
+## Technologies Used
+
+- React.js
+- TypeScript
+- Tailwind CSS
+- React Router DOM
+- Vite
+
+## Folder Structure
+
+# Project Horizon - Day 3
+
+## Overview
+
+Day 3 focused on developing the remaining dashboard pages and improving the application's navigation.
+
+## Tasks Completed
+
+### New Pages
+
+- Transactions
+- Cards
+- Analytics
+- Budget
+- Settings
+
+### Routing
+
+Implemented navigation for all pages.
+
+Routes:
+
+- /
+- /dashboard
+- /transactions
+- /cards
+- /analytics
+- /budget
+- /settings
+
+### Dashboard Improvements
+
+- Connected sidebar navigation
+- Active menu highlighting
+- Responsive page layouts
+- Consistent UI styling
+
+### Components Added
+
+- Transactions Table
+- Analytics Dashboard
+- Budget Overview
+- Cards Management
+- Settings Page
+
+### Technologies
+
+- React.js
+- TypeScript
+- Tailwind CSS
+- React Router DOM
+
+## Project Structure
+
 
 # 👨‍💻 Developed By
 
