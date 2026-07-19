@@ -8,7 +8,8 @@ import {
 } from "react-icons/fi";
 import Input from "../FormComponent/Input";
 import Button from "../FormComponent/Button";
-
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { login } from "../../features/auth/authSlice";
 
 
 const Register = () => {
@@ -31,8 +32,8 @@ const Register = () => {
   profileImage: "",
  });
 
-
- const navigate = useNavigate();
+const navigate = useNavigate();
+const dispatch = useAppDispatch();
 
 const handleChange = (
   e: React.ChangeEvent<HTMLInputElement>
@@ -94,10 +95,15 @@ const handleChange = (
     email: formData.email,
     phone: formData.phone,
     password: formData.password,
-    profileImage: formData.profileImage || "",
   };
+  const existingUser = JSON.parse(localStorage.getItem("user") || "null");
 
-  localStorage.setItem("user", JSON.stringify(userToStore));
+  if (existingUser && existingUser.email === formData.email) {
+  alert("This email is already registered.");
+  return;
+}
+
+  dispatch(login(userToStore));
 
   // Go to home page
   navigate("/dashboard");
@@ -167,13 +173,7 @@ const handleChange = (
   }
 
   // Profile Image (Optional)
-  if (
-    formData.profileImage &&
-    !formData.profileImage.type.startsWith("image/")
-  ) {
-    newErrors.profileImage = "Only image files are allowed";
-    isValid = false;
-  }
+  // We already validate file type when the image is selected.
 
   setErrors(newErrors);
 
@@ -288,43 +288,9 @@ const handleChange = (
             isPassword
           />
 
-          {/* Profile Image */}
-
-          {/* <div>
-
-            <label className="mb-2 block text-sm font-medium">
-              Profile Image
-            </label>
-
-            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-slate-300 p-4 hover:bg-slate-50">
-
-              <FiUpload />
-
-              <span>
-                {formData.profileImage
-                  ? formData.profileImage.name
-                  : "Upload Image"}
-              </span>
-
-              <input
-                type="file"
-                name="profileImage"
-                accept="image/*"
-                onChange={handleChange}
-                className="hidden"
-              />
-               {errors.profileImage && (
-                 <p className="mt-1 text-sm text-red-500">
-                {errors.profileImage}
-                </p>
-               )} 
-            </label>
-
-          </div> */}
-
           {/* Register Button */}
 
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" className="w-full">
             Register
           </Button>
 

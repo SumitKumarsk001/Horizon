@@ -41,17 +41,21 @@ const budgetData: BudgetItem[] = [
 ];
 
 const Budget = () => {
-  const totalBudget = budgetData.reduce(
-    (sum, item) => sum + item.budget,
-    0
-  );
+    // Load transactions and compute spent per category
+    let stored: { id:number; title:string; category:string; date:string; amount:number; status: string }[] = [];
+    try {
+      const s = localStorage.getItem("transactions");
+      if (s) stored = JSON.parse(s);
+    } catch (e) { console.error(e); }
 
-  const totalSpent = budgetData.reduce(
-    (sum, item) => sum + item.spent,
-    0
-  );
+    const spentByCategory = (cat: string) =>
+      stored
+        .filter((t) => t.status === "Expense" && t.category === cat)
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
 
-  const remaining = totalBudget - totalSpent;
+    const totalBudget = budgetData.reduce((sum, item) => sum + item.budget, 0);
+    const totalSpent = budgetData.reduce((sum, item) => sum + spentByCategory(item.category), 0);
+    const remaining = totalBudget - totalSpent;
 
   return (
     <div className="space-y-8">

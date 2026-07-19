@@ -78,11 +78,10 @@ const Dashboard = () => {
 
       </div>
 
-        {/* Overview Chart */}
-        <div>
+        {/* Overview Chart & Bank Card */}
+        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-2">
             <OverviewChart />
-        </div>
-        <div>
+
              <BankCard
               holderName={userName}
               cardNumber="**** **** **** 1234"
@@ -90,6 +89,7 @@ const Dashboard = () => {
               expiry="12/29"
               />
         </div>
+        
         <div className="mt-8">
             <RecentTransactions />
         </div>

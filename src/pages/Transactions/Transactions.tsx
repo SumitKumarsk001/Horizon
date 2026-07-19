@@ -1,98 +1,75 @@
-import { useMemo, useState } from "react";
+
+import { useSearchParams } from "react-router-dom";
 import {
   FiArrowDownLeft,
   FiArrowUpRight,
   FiSearch,
+  FiPlus,
 } from "react-icons/fi";
+import AddTransactionModal from "./AddTransactionModal";
+import { useState } from "react";
+import Button from "../../components/FormComponent/Button";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { addTransaction } from "../../features/transactions/transactionSlice";
+import type { Transaction } from "../../features/transactions/transactionSlice";
 
-type Transaction = {
-  id: number;
-  title: string;
-  category: string;
-  date: string;
-  amount: number;
-  status: "Income" | "Expense";
-};
+// type Transaction = {
+//   id: number;
+//   title: string;
+//   category: string;
+//   date: string;
+//   amount: number;
+//   status: "Income" | "Expense";
+// };
 
-const transactions: Transaction[] = [
-  {
-    id: 1,
-    title: "Salary",
-    category: "Company",
-    date: "15 Jul 2026",
-    amount: 2500,
-    status: "Income",
-  },
-  {
-    id: 2,
-    title: "Netflix",
-    category: "Subscription",
-    date: "14 Jul 2026",
-    amount: 15,
-    status: "Expense",
-  },
-  {
-    id: 3,
-    title: "Amazon",
-    category: "Shopping",
-    date: "13 Jul 2026",
-    amount: 180,
-    status: "Expense",
-  },
-  {
-    id: 4,
-    title: "Freelance",
-    category: "Project",
-    date: "12 Jul 2026",
-    amount: 800,
-    status: "Income",
-  },
-  {
-    id: 5,
-    title: "Electric Bill",
-    category: "Utilities",
-    date: "10 Jul 2026",
-    amount: 70,
-    status: "Expense",
-  },
-  {
-    id: 6,
-    title: "Bonus",
-    category: "Company",
-    date: "05 Jul 2026",
-    amount: 500,
-    status: "Income",
-  },
-];
 
 const Transactions = () => {
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("All");
+ const [searchParams, setSearchParams] = useSearchParams();
+ const search = searchParams.get("search") || "";
 
-  const filteredTransactions = useMemo(() => {
-    return transactions.filter((item) => {
-      const matchesSearch =
-        item.title.toLowerCase().includes(search.toLowerCase());
+ const filter =searchParams.get("filter") || "All";
 
-      const matchesFilter =
-        filter === "All" || item.status === filter;
+ const dispatch = useAppDispatch();
 
-      return matchesSearch && matchesFilter;
-    });
-  }, [search, filter]);
+const transactions = useAppSelector(
+  (state) => state.transactions.transactions
+);
+
+ const [openModal, setOpenModal] = useState(false);
+
+ 
+
+  const filteredTransactions = transactions.filter((item) => {
+    const matchesSearch = item.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const matchesFilter =
+      filter === "All" ? true : item.status === filter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const handleAdd = (transaction: Transaction) => {
+    dispatch(addTransaction(transaction));
+  };
 
   return (
     <div className="space-y-6">
 
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold dark:text-white">
+      <div className="flex  items-start justify-between gap-4 md:flex-row md:items-center">
+        <div><h1 className="text-3xl font-bold dark:text-white">
           Transactions
         </h1>
-
         <p className="text-slate-500">
           View all your income and expenses.
         </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button type="button" variant="primary" className="w-auto" onClick={() => setOpenModal(true)}>
+           <FiPlus /> Add Transaction
+         </Button>
+         </div>
+         
       </div>
 
       {/* Search + Filter */}
@@ -106,21 +83,35 @@ const Transactions = () => {
             type="text"
             placeholder="Search transaction..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 py-2 pl-10 pr-4 outline-none dark:border-slate-600 dark:bg-slate-700"
+            onChange={(e) =>
+               setSearchParams({
+              search: e.target.value,
+              })
+             }
+            className="w-full rounded-lg border border-slate-300 py-2 pl-10 pr-4 outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
           />
 
         </div>
 
+        <div className="flex items-center gap-3">
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="rounded-lg border border-slate-300 px-4 py-2 outline-none dark:border-slate-600 dark:bg-slate-700"
+         onChange={(e) =>
+          setSearchParams({
+          search,
+          filter: e.target.value,
+         })
+         }
+          className="rounded-lg border border-slate-300 px-4 py-2 outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
         >
           <option>All</option>
           <option>Income</option>
           <option>Expense</option>
         </select>
+
+        
+
+         </div>
 
       </div>
 
@@ -131,7 +122,7 @@ const Transactions = () => {
 
           <thead className="border-b">
 
-            <tr className="text-left">
+            <tr className="text-left dark:text-gray-400">
 
               <th className="px-6 py-4">Transaction</th>
 
@@ -182,11 +173,11 @@ const Transactions = () => {
 
                 </td>
 
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 dark:text-gray-500">
                   {item.category}
                 </td>
 
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 dark:text-gray-500">
                   {item.date}
                 </td>
 
@@ -224,6 +215,8 @@ const Transactions = () => {
         </table>
 
       </div>
+
+      <AddTransactionModal open={openModal} onClose={() => setOpenModal(false)} onAdd={handleAdd} />
 
     </div>
   );

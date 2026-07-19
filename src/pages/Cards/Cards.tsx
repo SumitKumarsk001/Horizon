@@ -1,42 +1,16 @@
 import {
   FiPlus,
   FiWifi,
-  FiMoreVertical,
 } from "react-icons/fi";
 import { FaCcMastercard } from "react-icons/fa";
+import {  useState } from "react";
+import AddCardModal from "./AddCardModal";
+import Button from "../../components/FormComponent/Button";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { addCard} from "../../features/cards/cardSlice";
+import type { Card } from "../../features/cards/cardSlice";
 
-type Card = {
-  id: number;
-  holder: string;
-  number: string;
-  balance: string;
-  expiry: string;
-  color: string;
-};
 
-const cards: Omit<Card, "holder">[] = [
-  {
-    id: 1,
-    number: "**** **** **** 1234",
-    balance: "$12,540.00",
-    expiry: "12/29",
-    color: "from-blue-600 to-indigo-700",
-  },
-  {
-    id: 2,
-    number: "**** **** **** 5678",
-    balance: "$4,250.00",
-    expiry: "08/28",
-    color: "from-emerald-500 to-green-700",
-  },
-  {
-    id: 3,
-    number: "**** **** **** 9876",
-    balance: "$8,760.00",
-    expiry: "03/30",
-    color: "from-purple-600 to-pink-600",
-  },
-];
 
 const parseUserName = () => {
   if (typeof window === "undefined") return "";
@@ -54,8 +28,41 @@ const parseUserName = () => {
   }
 };
 
+const maskCardNumber = (value: string) => {
+  const digits = value.replace(/\D/g, "");
+  const visibleCount = 4;
+  const maskedDigits = digits
+    .split("")
+    .map((digit, index) =>
+      index >= digits.length - visibleCount ? digit : "*"
+    );
+
+  let digitIndex = 0;
+  return value.replace(/\d/g, () => maskedDigits[digitIndex++] || "*");
+};
+
 const Cards = () => {
   const userName = parseUserName() || "Card Holder";
+  const dispatch = useAppDispatch();
+  const cards = useAppSelector((state) => state.cards.cards);
+
+
+  const [open, setOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState<Card | null>(null);
+
+
+  const handleAddCard = (card: Card) => {
+    dispatch(addCard(card));
+  };
+
+  // const handleUpdateCard = (card: Card) => {
+  //    dispatch(updateCard(card));
+  // setEditingCard(null);
+  // };
+
+  // const handleDeleteCard = (id: number) => {
+  //    dispatch(deleteCard(id));
+  // };
 
   return (
     <div className="space-y-8">
@@ -71,18 +78,37 @@ const Cards = () => {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-white transition hover:bg-blue-700">
+        <Button
+          type="button"
+          variant="primary"
+          className="w-auto flex items-center gap-2 px-5 py-3"
+          onClick={() => setOpen(true)}
+        >
           <FiPlus />
           Add Card
-        </button>
+        </Button>
       </div>
 
+     
+
+       <AddCardModal
+       key={editingCard ? `edit-${editingCard.id}` : "add"}
+       open={open}
+       initialCard={editingCard}
+       onClose={() => {
+         setOpen(false);
+         setEditingCard(null);
+       }}
+       onAdd={handleAddCard}
+      //  onUpdate={handleUpdateCard}
+       />
+
       {/* Cards Grid */}
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 ">
         {cards.map((card) => (
           <div
             key={card.id}
-            className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${card.color} p-6 text-white shadow-lg`}
+            className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${card.color} p-6 text-white shadow-lg h-full`}
           >
             {/* Decorative Circles */}
             <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10" />
@@ -92,49 +118,56 @@ const Cards = () => {
             <div className="relative flex items-center justify-between">
               <FiWifi size={24} className="rotate-90" />
 
-              <button>
-                <FiMoreVertical size={20} />
-              </button>
+              {/* <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="rounded-md "
+                  onClick={() => {
+                    setEditingCard(card);
+                    setOpen(true);
+                  }}
+                >
+                  <FiEdit size={10} />
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="rounded-md"
+                  onClick={() => handleDeleteCard(card.id)}
+                >
+                  <FiTrash2 size={10} />
+                </Button>
+              </div> */}
             </div>
 
             {/* Balance */}
             <div className="relative mt-8">
-              <p className="text-sm text-white/80">
-                Available Balance
-              </p>
+              <p className="text-sm text-white/80">Available Balance</p>
 
-              <h2 className="mt-2 text-3xl font-bold">
-                {card.balance}
-              </h2>
+              <h2 className="mt-2 text-3xl font-bold">{card.balance}</h2>
             </div>
 
             {/* Card Number */}
             <div className="relative mt-8">
               <p className="tracking-[0.3em] text-lg font-semibold">
-                {card.number}
+                {maskCardNumber(card.number)}
               </p>
             </div>
 
             {/* Footer */}
             <div className="relative mt-8 flex items-end justify-between">
               <div>
-                <p className="text-xs uppercase text-white/70">
-                  Card Holder
-                </p>
+                <p className="text-xs uppercase text-white/70">Card Holder</p>
 
-                <h3 className="mt-1 font-semibold">
-                  {userName}
-                </h3>
+                <h3 className="mt-1 font-semibold">{card.holder || userName}</h3>
               </div>
 
               <div>
-                <p className="text-xs uppercase text-white/70">
-                  Expiry
-                </p>
+                <p className="text-xs uppercase text-white/70">Expiry</p>
 
-                <h3 className="mt-1 font-semibold">
-                  {card.expiry}
-                </h3>
+                <h3 className="mt-1 font-semibold">{card.expiry}</h3>
               </div>
 
               <FaCcMastercard size={42} />
@@ -161,7 +194,7 @@ const Cards = () => {
           </h3>
 
           <p className="mt-4 text-4xl font-bold text-green-600">
-            3
+            {cards.length}
           </p>
         </div>
 

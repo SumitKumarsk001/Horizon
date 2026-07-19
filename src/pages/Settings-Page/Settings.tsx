@@ -152,7 +152,7 @@ const Settings = () => {
 
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2 dark:text-white">
           <Input
             label="First Name"
             type="text"

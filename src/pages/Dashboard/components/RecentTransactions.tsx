@@ -85,7 +85,7 @@ const RecentTransactions = () => {
           </p>
         </div>
 
-        <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm transition hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700">
+        <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm transition hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700 dark:text-white">
           View All
         </button>
       </div>

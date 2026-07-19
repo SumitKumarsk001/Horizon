@@ -1,6 +1,10 @@
 
-import { FiMenu, FiSearch, FiBell, FiMoon ,FiSun} from "react-icons/fi";
-import { useEffect, useState } from "react";
+import { FiSearch, FiBell, FiMoon ,FiSun,FiSidebar} from "react-icons/fi";
+import { sidebarItems } from "../Sidebar/sidebarData";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
+import { toggleTheme } from "../../features/theme/themeSlice";
 
 type NavbarProps = {
   onMenuClick: () => void;
@@ -8,24 +12,36 @@ type NavbarProps = {
 
 const Navbar = ({ onMenuClick }: NavbarProps) => {
 
+const [search, setSearch] = useState("");
+const [showResult, setShowResult] = useState(false);
+
+const navigate = useNavigate();
+
+const filteredPages = sidebarItems.filter((item) =>
+  item.title.toLowerCase().includes(search.toLowerCase())
+);
   // State to manage theme (light/dark)
-  const [theme, setTheme] = useState(() => {
-  return localStorage.getItem("theme") || "light";
-  }); 
+  // const [theme, setTheme] = useState(() => {
+  // return localStorage.getItem("theme") || "light";
+  // }); 
 
-  const toggleTheme = () => {
-  const newTheme = theme === "light" ? "dark" : "light";
+  // const toggleTheme = () => {
+  // const newTheme = theme === "light" ? "dark" : "light";
 
-  setTheme(newTheme);
+  // setTheme(newTheme);
 
-  localStorage.setItem("theme", newTheme);
+  // localStorage.setItem("theme", newTheme);
 
-  if (newTheme === "dark") {
-    document.documentElement.classList.add("dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-  }
-  };
+  // if (newTheme === "dark") {
+  //   document.documentElement.classList.add("dark");
+  // } else {
+  //   document.documentElement.classList.remove("dark");
+  // }
+  // };
+
+  const dispatch = useAppDispatch();
+
+  const theme = useAppSelector((state) => state.theme.mode);
 
    useEffect(() => {
   if (theme === "dark") {
@@ -47,12 +63,12 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
             onClick={onMenuClick}
             className="rounded-lg p-2 transition hover:bg-slate-100"
           >
-            <FiMenu size={22} />
+            <FiSidebar size={22} />
           </button>
 
           {/* Title */}
           <div>
-            <h1 className="text-xl font-bold text-slate-800">
+            <h1 className="text-xl font-bold text-blue-600 dark:text-white">
              Horizon
             </h1>
 
@@ -64,15 +80,42 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
 
         {/* Search Bar */}
         <div className="hidden md:flex flex-1 justify-center px-10">
-          <div className="flex w-full max-w-md items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2">
+          <div className="relative w-full max-w-md">
+            <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+              <FiSearch className="text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setShowResult(true);
+                }}
+                className="w-full bg-transparent border-none px-2 py-1 text-sm text-slate-900 outline-none placeholder:text-slate-400 dark:text-white dark:placeholder:text-slate-500"
+              />
+            </div>
 
-            <FiSearch className="text-slate-400" />
-
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="ml-3 w-full bg-transparent text-sm outline-none"
-            />
+            {showResult && search && (
+              <div className="absolute left-0 right-0 top-full z-20 mt-2 rounded-2xl bg-white shadow-xl border border-slate-200 overflow-hidden dark:bg-slate-900 dark:border-slate-700">
+                {filteredPages.length > 0 ? (
+                  filteredPages.map((item) => (
+                    <button
+                      key={item.path}
+                      onClick={() => {
+                        navigate(item.path);
+                        setSearch("");
+                        setShowResult(false);
+                      }}
+                      className="block w-full px-4 py-3 text-left text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                    >
+                      {item.title}
+                    </button>
+                  ))
+                ) : (
+                  <p className="p-4 text-sm text-slate-500 dark:text-slate-400">No page found</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -85,29 +128,11 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
           </button>
 
           {/* Theme */}
-          <button className="rounded-full p-2 transition hover:bg-slate-100" onClick={toggleTheme}>
+          <button className="rounded-full p-2 transition hover:bg-slate-100" onClick={()=>dispatch(toggleTheme())}>
             {theme === "light" ? <FiMoon size={20} /> : <FiSun size={20} />}
           </button>
          
          
-          {/* Profile */}
-          {/* <div className="flex items-center gap-3">
-
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgl6XLGmKN4GX1drT9TmSldDW2TZCpG2p3tEIiJWY7QQ&s=10"
-              alt="Profile"
-              className="h-10 w-10 rounded-full object-cover"
-            />
-
-            <div className="hidden lg:block">
-              <h4 className="text-sm font-semibold text-slate-700">
-                James
-              </h4>
-            </div>
-          </div>   */}
-
-          
-
         </div>
       </div>
     </header>

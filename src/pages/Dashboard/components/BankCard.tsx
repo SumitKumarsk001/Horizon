@@ -15,7 +15,7 @@ const BankCard = ({
   expiry,
 }: BankCardProps) => {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-700 p-6 text-white shadow-lg">
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-700 p-6 text-white shadow-lg h-full min-h-[22rem] dark:bg-gradient-to-br dark:from-blue-800 dark:via-blue-700 dark:to-indigo-900">
 
       {/* Background Circle */}
       <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />

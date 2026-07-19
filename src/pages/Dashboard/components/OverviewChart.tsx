@@ -43,7 +43,7 @@ const OverviewChart = () => {
       </div>
 
       {/* Chart */}
-      <div className="h-[320px]">
+      <div className="h-72 md:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid

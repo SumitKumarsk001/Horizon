@@ -7,6 +7,7 @@ type ButtonProps = {
   loading?: boolean;
   disabled?: boolean;
   onClick?: () => void;
+  className?: string;
 };
 
 const Button = ({
@@ -16,9 +17,10 @@ const Button = ({
   loading = false,
   disabled = false,
   onClick,
+  className = "",
 }: ButtonProps) => {
   const baseClasses =
-    "w-full rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-2";
+    "inline-flex items-center justify-center rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-2";
 
   const variants = {
     primary:
@@ -34,7 +36,7 @@ const Button = ({
       type={type}
       disabled={disabled || loading}
       onClick={onClick}
-      className={`${baseClasses} ${variants[variant]} ${
+      className={`${baseClasses} ${variants[variant]} ${className} ${
         disabled || loading
           ? "cursor-not-allowed opacity-60"
           : "cursor-pointer"

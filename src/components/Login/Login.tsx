@@ -3,9 +3,12 @@ import { Link ,useNavigate} from "react-router-dom";
 import {  FiMail, FiLock } from "react-icons/fi";
 import Input from "../FormComponent/Input";
 import Button from "../FormComponent/Button";
+import { useAppDispatch } from "../../hooks/reduxHooks";
+import { login } from "../../features/auth/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -39,19 +42,24 @@ const Login = () => {
 
   if (!validateForm()) return;
 
-  console.log("Login Successful");
-  console.log(formData);
+  // console.log("Login Successful");
+  // console.log(formData);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  localStorage.setItem("isLoggedIn", "true");
-  if (
-    formData.email === user.email &&
-    formData.password === user.password
-  ) {
-    navigate("/dashboard");
-  } else {
-    alert("Invalid Email or Password");
+  if (!user) {
+  alert("No account found. Please register first.");
+  return;
   }
+  if (
+  user.email !== formData.email ||
+  user.password !== formData.password
+ ) {
+  alert("Invalid email or password");
+  return;
+ }
+  dispatch(login(user));
+
+  navigate("/dashboard");
         
 };
 
@@ -111,28 +119,28 @@ const validateForm = () => {
           {/* Email */}
 
           <Input
-  label="Email"
-  type="email"
-  name="email"
-  placeholder="Enter your email"
-  value={formData.email}
-  onChange={handleChange}
-  error={errors.email}
-  icon={<FiMail />}
+            label="Email"
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            icon={<FiMail />}
 />
 
           {/* Password */}
   
           <Input
-  label="Password"
-  type="password"
-  name="password"
-  placeholder="Enter password"
-  value={formData.password}
-  onChange={handleChange}
-  error={errors.password}
-  icon={<FiLock />}
-  isPassword
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            icon={<FiLock />}
+            isPassword
 />
 
           {/* Remember */}
@@ -156,7 +164,7 @@ const validateForm = () => {
 
           {/* Login Button */}
 
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" className="w-full">
             Login
           </Button>
 
