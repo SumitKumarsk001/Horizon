@@ -257,6 +257,9 @@ Routes:
 - TypeScript
 - Tailwind CSS
 - React Router DOM
+ <img width="632" height="311" alt="image" src="https://github.com/user-attachments/assets/4771d5bf-53d0-40ab-a69b-b6840394df18" />
+ <img width="635" height="314" alt="image" src="https://github.com/user-attachments/assets/b859c7b7-3fc5-4eb8-9c19-3882e721cbc5" />
+
 
 # Project Horizon - Day 4
 
