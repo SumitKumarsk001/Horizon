@@ -258,8 +258,172 @@ Routes:
 - Tailwind CSS
 - React Router DOM
 
-## Project Structure
+# Project Horizon - Day 4
 
+## Overview
+
+Day 4 focused on implementing reusable dashboard components and enhancing the user interface with dynamic data rendering.
+
+---
+
+## Tasks Completed
+
+### Dashboard Components
+
+- Created reusable Statistic Card component
+- Implemented Transaction Card component
+- Added Bank Card component
+- Built reusable Button component
+- Added reusable Input component
+
+### Data Rendering
+
+- Displayed account balance
+- Rendered recent transactions
+- Added transaction status badges
+- Displayed income and expense summaries
+
+### UI Improvements
+
+- Improved dashboard spacing
+- Added hover effects
+- Enhanced responsive layout
+- Consistent typography and color palette
+
+---
+
+## Technologies Used
+
+- React.js
+- TypeScript
+- Tailwind CSS
+- Vite
+
+---
+
+## Folder Structure
+
+src/
+├── components/
+│ ├── Dashboard/
+│ │ ├── StatCard.tsx
+│ │ ├── TransactionCard.tsx
+│ │ ├── BankCard.tsx
+│ │ └── SummaryCard.tsx
+│ │
+│ ├── UI/
+│ │ ├── Button.tsx
+│ │ └── Input.tsx
+│
+├── data/
+│ └── dashboardData.ts
+
+---
+
+## Features
+
+- Reusable components
+- Responsive dashboard
+- Transaction status indicators
+- Clean UI design
+- Better component organization
+
+---
+
+## Learning Outcome
+
+- Component reusability
+- Passing props in React
+- Dynamic rendering using arrays
+- Responsive UI development
+
+# Project Horizon - Day 5
+
+## Overview
+
+Day 5 focused on implementing transaction management functionality, state management, and improving user interactions.
+
+---
+
+## Tasks Completed
+
+### Transaction Management
+
+- Added transaction list
+- Created Add Transaction modal
+- Implemented form validation
+- Added transaction categories
+- Added transaction status selection
+
+### State Management
+
+- Managed transactions using React state
+- Updated transaction list dynamically
+- Implemented form reset after submission
+
+### UI Improvements
+
+- Responsive modal
+- Better button interactions
+- Improved form layout
+- Enhanced user experience
+
+---
+
+## Technologies Used
+
+- React.js
+- TypeScript
+- Tailwind CSS
+- React Hooks
+
+---
+
+## Folder Structure
+
+src/
+├── components/
+│ ├── Modal/
+│ │ └── AddTransactionModal.tsx
+│ │
+│ ├── Form/
+│ │ ├── Input.tsx
+│ │ ├── Select.tsx
+│ │ └── Button.tsx
+│
+├── pages/
+│ └── Transactions.tsx
+
+---
+
+## Features
+
+- Add new transactions
+- Form validation
+- Dynamic transaction rendering
+- Responsive modal
+- Clean user interface
+
+---
+
+## Learning Outcome
+
+- React Hooks (useState)
+- Form handling
+- Event handling
+- Component communication using props
+- Dynamic UI updates
+
+---
+
+## Next Goals
+
+- Edit transaction
+- Delete transaction
+- Search transactions
+- Filter by category
+- API integration
+- Backend connectivity
 
 # 👨‍💻 Developed By
 
