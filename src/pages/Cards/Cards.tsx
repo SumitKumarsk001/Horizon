@@ -1,14 +1,18 @@
 import {
   FiPlus,
+  //FiTrash2,
   FiWifi,
 } from "react-icons/fi";
 import { FaCcMastercard } from "react-icons/fa";
-import {  useState } from "react";
+import {  useState,useEffect } from "react";
 import AddCardModal from "./AddCardModal";
 import Button from "../../components/FormComponent/Button";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { addCard} from "../../features/cards/cardSlice";
-import type { Card } from "../../features/cards/cardSlice";
+import { addCard,setCards,} from "../../features/cards/cardSlice";
+import type { Card} from "../../features/cards/cardSlice";
+import { getCardsApi, addCardsApi, } from "../../services/cardService";
+import WorkspaceCard from "../../components/Common/WorkspaceCard";
+import PageHeader from "../../components/Common/PageHeader";
 
 
 
@@ -45,51 +49,71 @@ const Cards = () => {
   const userName = parseUserName() || "Card Holder";
   const dispatch = useAppDispatch();
   const cards = useAppSelector((state) => state.cards.cards);
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const userEmail = currentUser.email;
 
   const [open, setOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Card | null>(null);
 
+ useEffect(() => {
 
-  const handleAddCard = (card: Card) => {
-    dispatch(addCard(card));
+  const fetchCards = async () => {
+    try {
+      const response = await getCardsApi(userEmail);
+      dispatch(setCards(response.data));
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  fetchCards();
+}, [dispatch]);
+
+  const handleAddCard = async (card: Card) => {
+  try {
+    const response = await addCardsApi(card,userEmail);
+
+    dispatch(addCard(response.data));
+
+    setOpen(false);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   // const handleUpdateCard = (card: Card) => {
   //    dispatch(updateCard(card));
   // setEditingCard(null);
   // };
 
-  // const handleDeleteCard = (id: number) => {
-  //    dispatch(deleteCard(id));
+  // const handleDeleteCard = async (id: Card["id"]) => {
+  //   dispatch(deleteCard(id));
+
+  //   try {
+  //     await deleteCardApi(id);
+  //   } catch (error) {
+  //     console.error("Failed to delete card from API, local delete still applied:", error);
+  //   }
   // };
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold dark:text-white">
-            My Cards
-          </h1>
-
-          <p className="text-slate-500">
-            Manage your debit and credit cards.
-          </p>
-        </div>
-
+      <PageHeader
+    title="My Cards"
+    subtitle="Manage your debit and credit cards."
+    action={
         <Button
-          type="button"
-          variant="primary"
-          className="w-auto flex items-center gap-2 px-5 py-3"
-          onClick={() => setOpen(true)}
+            type="button"
+            variant="primary"
+            className="w-auto flex items-center gap-2 px-5 py-3"
+            onClick={() => setOpen(true)}
         >
-          <FiPlus />
-          Add Card
+            <FiPlus />
+            Add Card
         </Button>
-      </div>
-
-     
+         }
+     />
 
        <AddCardModal
        key={editingCard ? `edit-${editingCard.id}` : "add"}
@@ -100,12 +124,12 @@ const Cards = () => {
          setEditingCard(null);
        }}
        onAdd={handleAddCard}
-      //  onUpdate={handleUpdateCard}
+        //onUpdate={handleUpdateCard}
        />
 
       {/* Cards Grid */}
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 ">
-        {cards.map((card) => (
+        {Array.isArray(cards) ? cards.map((card) => (
           <div
             key={card.id}
             className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${card.color} p-6 text-white shadow-lg h-full`}
@@ -114,12 +138,12 @@ const Cards = () => {
             <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10" />
             <div className="absolute -bottom-12 -left-10 h-28 w-28 rounded-full bg-white/10" />
 
-            {/* Header */}
+            {/*Card Header */}
             <div className="relative flex items-center justify-between">
               <FiWifi size={24} className="rotate-90" />
 
               {/* <div className="flex items-center gap-2">
-                <Button
+               <Button
                   type="button"
                   variant="secondary"
                   className="rounded-md "
@@ -129,12 +153,12 @@ const Cards = () => {
                   }}
                 >
                   <FiEdit size={10} />
-                </Button>
+                </Button> 
 
                 <Button
                   type="button"
                   variant="secondary"
-                  className="rounded-md"
+                  className="rounded-md "
                   onClick={() => handleDeleteCard(card.id)}
                 >
                   <FiTrash2 size={10} />
@@ -173,40 +197,22 @@ const Cards = () => {
               <FaCcMastercard size={42} />
             </div>
           </div>
-        ))}
+        )) : null}
       </div>
 
       {/* Summary Cards */}
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
-          <h3 className="text-lg font-semibold dark:text-white">
-            Total Cards
-          </h3>
+        <WorkspaceCard title="Total Cards" length={cards.length} children/>
+        
 
-          <p className="mt-4 text-4xl font-bold text-blue-600">
-            {cards.length}
-          </p>
-        </div>
+        <WorkspaceCard title="Active Cards" length={cards.length} children/>
+          
 
-        <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
-          <h3 className="text-lg font-semibold dark:text-white">
-            Active Cards
-          </h3>
-
-          <p className="mt-4 text-4xl font-bold text-green-600">
-            {cards.length}
-          </p>
-        </div>
-
-        <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
-          <h3 className="text-lg font-semibold dark:text-white">
-            Monthly Spending
-          </h3>
-
+        <WorkspaceCard  title="Monthly Spending">
           <p className="mt-4 text-4xl font-bold text-red-500">
             $2,480
           </p>
-        </div>
+        </WorkspaceCard>
       </div>
     </div>
   );

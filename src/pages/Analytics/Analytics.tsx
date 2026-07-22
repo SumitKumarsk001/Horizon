@@ -11,6 +11,8 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import WorkspaceCard from "../../components/Common/WorkspaceCard";
+import PageHeader from "../../components/Common/PageHeader";
 
 const COLORS = [
   "#2563eb",
@@ -59,46 +61,41 @@ const Analytics = () => {
     <div className="space-y-8">
 
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold dark:text-white">
-          Analytics
-        </h1>
-
-        <p className="text-slate-500">
-          Monitor your financial performance.
-        </p>
-      </div>
+      <PageHeader
+    title="Analytics"
+    subtitle=" Monitor your financial performance."
+     />
 
       {/* Summary Cards */}
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
 
-        <div className="rounded-xl bg-white p-6 shadow dark:bg-slate-800">
+        <WorkspaceCard>
           <p className="text-slate-500">Income</p>
           <h2 className="mt-2 text-3xl font-bold text-green-600">
             ${totalIncome}
           </h2>
-        </div>
+        </WorkspaceCard>
 
-        <div className="rounded-xl bg-white p-6 shadow dark:bg-slate-800">
+        <WorkspaceCard>
           <p className="text-slate-500">Expense</p>
           <h2 className="mt-2 text-3xl font-bold text-red-500">
             ${totalExpense}
           </h2>
-        </div>
+        </WorkspaceCard>
 
-        <div className="rounded-xl bg-white p-6 shadow dark:bg-slate-800">
+        <WorkspaceCard>
           <p className="text-slate-500">Savings</p>
           <h2 className="mt-2 text-3xl font-bold text-blue-600">
             ${savings}
           </h2>
-        </div>
+        </WorkspaceCard>
 
-        <div className="rounded-xl bg-white p-6 shadow dark:bg-slate-800">
+        <WorkspaceCard>
           <p className="text-slate-500">Growth</p>
           <h2 className="mt-2 text-3xl font-bold text-purple-600">
             +18%
           </h2>
-        </div>
+        </WorkspaceCard>
 
       </div>
 
@@ -106,12 +103,7 @@ const Analytics = () => {
       <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
 
         {/* Line Chart */}
-        <div className="rounded-xl bg-white p-6 shadow dark:bg-slate-800">
-
-          <h2 className="mb-6 text-xl font-semibold dark:text-white">
-            Income vs Expense
-          </h2>
-
+        <WorkspaceCard title="Income vs Expense">
           <div className="h-[350px]">
 
             <ResponsiveContainer width="100%" height="100%">
@@ -145,16 +137,10 @@ const Analytics = () => {
             </ResponsiveContainer>
 
           </div>
-
-        </div>
+        </WorkspaceCard>
 
         {/* Pie Chart */}
-        <div className="rounded-xl bg-white p-6 shadow dark:bg-slate-800">
-
-          <h2 className="mb-6 text-xl font-semibold dark:text-white">
-            Expense Categories
-          </h2>
-
+        <WorkspaceCard title=" Expense Categories">
           <div className="h-[350px]">
 
             <ResponsiveContainer width="100%" height="100%">
@@ -184,8 +170,7 @@ const Analytics = () => {
             </ResponsiveContainer>
 
           </div>
-
-        </div>
+        </WorkspaceCard>
 
       </div>
 

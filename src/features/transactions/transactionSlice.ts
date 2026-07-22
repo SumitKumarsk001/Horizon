@@ -2,7 +2,7 @@ import { createSlice} from "@reduxjs/toolkit";
 import type {PayloadAction} from "@reduxjs/toolkit"
 
 export interface Transaction {
-  id: string;
+  id: string | number;
   title: string;
   category: string;
   amount: number;
@@ -15,9 +15,7 @@ interface TransactionState {
 }
 
 const initialState: TransactionState = {
-  transactions: JSON.parse(
-    localStorage.getItem("transactions") || "[]"
-  ),
+  transactions: [],
 };
 
 const transactionSlice = createSlice({
@@ -26,60 +24,51 @@ const transactionSlice = createSlice({
   initialState,
 
   reducers: {
-    addTransaction: (
-      state,
-      action: PayloadAction<Transaction>
-    ) => {
-      state.transactions.unshift(action.payload);
+   addTransaction: (
+  state,
+  action: PayloadAction<Transaction>
+   ) => {
+  state.transactions.unshift(action.payload);
+  },
 
-      localStorage.setItem(
-        "transactions",
-        JSON.stringify(state.transactions)
-      );
-    },
+    setTransactions: (
+  state,
+  action: PayloadAction<Transaction[]>
+   ) => {
+  state.transactions = action.payload;
+   },
 
     deleteTransaction: (
-      state,
-      action: PayloadAction<string>
-    ) => {
-      state.transactions = state.transactions.filter(
-        (transaction) => transaction.id !== action.payload
-      );
-
-      localStorage.setItem(
-        "transactions",
-        JSON.stringify(state.transactions)
-      );
-    },
+  state,
+  action: PayloadAction<string>
+  ) => {
+  state.transactions = state.transactions.filter(
+    (transaction) => transaction.id !== action.payload
+  );
+  },
 
     updateTransaction: (
-      state,
-      action: PayloadAction<Transaction>
-    ) => {
-      const index = state.transactions.findIndex(
-        (transaction) => transaction.id === action.payload.id
-      );
+  state,
+  action: PayloadAction<Transaction>
+   ) => {
+  const index = state.transactions.findIndex(
+    (transaction) => transaction.id === action.payload.id
+  );
 
-      if (index !== -1) {
-        state.transactions[index] = action.payload;
+  if (index !== -1) {
+    state.transactions[index] = action.payload;
+  }
+  },
 
-        localStorage.setItem(
-          "transactions",
-          JSON.stringify(state.transactions)
-        );
-      }
-    },
-
-    clearTransactions: (state) => {
-      state.transactions = [];
-
-      localStorage.removeItem("transactions");
-    },
+   clearTransactions: (state) => {
+  state.transactions = [];
+  },
   },
 });
 
 export const {
   addTransaction,
+  setTransactions,
   deleteTransaction,
   updateTransaction,
   clearTransactions,

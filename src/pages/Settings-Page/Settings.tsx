@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FiBell, FiMoon, FiSun, FiUser, FiMail, FiPhone } from "react-icons/fi";
 import Input from "../../components/FormComponent/Input";
 import Button from "../../components/FormComponent/Button";
+import WorkspaceCard from "../../components/Common/WorkspaceCard";
+import PageHeader from "../../components/Common/PageHeader";
 
 type User = {
   firstName: string;
@@ -102,21 +104,14 @@ const Settings = () => {
     <div className="space-y-8">
 
       {/* Header */}
-
-      <div>
-        <h1 className="text-3xl font-bold dark:text-white">
-          Settings
-        </h1>
-
-        <p className="text-slate-500">
-          Manage your account preferences.
-        </p>
-      </div>
+    <PageHeader
+    title="Settings"
+    subtitle="Manage your account preferences."
+     />
 
       {/* Profile */}
 
-      <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
-
+      <WorkspaceCard>
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center">
 
           <img
@@ -133,20 +128,17 @@ const Settings = () => {
               {user.firstName} {user.lastName}
             </h2>
 
-            <p className="text-slate-500">
+            <p className="text-slate-400">
               {user.email}
             </p>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
-              Upload profile image
-            </label>
-            <input
+          <div className="flex flex-col gap-2 dark:text-white text-slate-500">
+            <Input
+              label="Upload profile image"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="rounded-lg border border-slate-200 bg-slate-50 p-2 text-sm text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
             />
           </div>
 
@@ -189,17 +181,11 @@ const Settings = () => {
             icon={<FiPhone />}
           />
         </div>
-
-      </div>
+      </WorkspaceCard>
 
       {/* Preferences */}
 
-      <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
-
-        <h2 className="mb-6 text-xl font-semibold dark:text-white">
-          Preferences
-        </h2>
-
+      <WorkspaceCard title="Preferences">
         <div className="space-y-6">
 
           {/* Theme */}
@@ -275,8 +261,7 @@ const Settings = () => {
           </div>
 
         </div>
-
-      </div>
+      </WorkspaceCard>
 
       {/* Save Button */}
 

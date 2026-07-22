@@ -3,31 +3,25 @@ import { useSearchParams } from "react-router-dom";
 import {
   FiArrowDownLeft,
   FiArrowUpRight,
-  FiSearch,
   FiPlus,
 } from "react-icons/fi";
 import AddTransactionModal from "./AddTransactionModal";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Button from "../../components/FormComponent/Button";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
-import { addTransaction } from "../../features/transactions/transactionSlice";
+import { addTransaction ,setTransactions} from "../../features/transactions/transactionSlice";
 import type { Transaction } from "../../features/transactions/transactionSlice";
-
-// type Transaction = {
-//   id: number;
-//   title: string;
-//   category: string;
-//   date: string;
-//   amount: number;
-//   status: "Income" | "Expense";
-// };
-
+import {getTransactionsApi,addTransactionApi,} from "../../services/transactionService";
+import WorkspaceCard from "../../components/Common/WorkspaceCard";
+import Input from "../../components/FormComponent/Input";
+import PageHeader from "../../components/Common/PageHeader";
 
 const Transactions = () => {
  const [searchParams, setSearchParams] = useSearchParams();
  const search = searchParams.get("search") || "";
-
  const filter =searchParams.get("filter") || "All";
+ const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+ const userEmail = currentUser.email;
 
  const dispatch = useAppDispatch();
 
@@ -37,7 +31,20 @@ const transactions = useAppSelector(
 
  const [openModal, setOpenModal] = useState(false);
 
- 
+ useEffect(() => {
+   
+  const fetchTransactions = async () => {
+    try {
+      const response = await getTransactionsApi(userEmail);
+
+      dispatch(setTransactions(response.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  fetchTransactions();
+}, [dispatch]);
 
   const filteredTransactions = transactions.filter((item) => {
     const matchesSearch = item.title
@@ -48,38 +55,45 @@ const transactions = useAppSelector(
     return matchesSearch && matchesFilter;
   });
 
-  const handleAdd = (transaction: Transaction) => {
-    dispatch(addTransaction(transaction));
-  };
+ const handleAdd = async (transaction: Transaction) => {
+  try {
+    const response = await addTransactionApi(transaction,userEmail);
+
+    dispatch(addTransaction(response.data));
+
+    setOpenModal(false);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="flex  items-start justify-between gap-4 md:flex-row md:items-center">
-        <div><h1 className="text-3xl font-bold dark:text-white">
-          Transactions
-        </h1>
-        <p className="text-slate-500">
-          View all your income and expenses.
-        </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="primary" className="w-auto" onClick={() => setOpenModal(true)}>
-           <FiPlus /> Add Transaction
-         </Button>
-         </div>
-         
-      </div>
+    <PageHeader
+    title="My Transactions"
+    subtitle="View all your income and expenses."
+    action={
+        <Button
+            type="button"
+            variant="primary"
+            className="w-auto flex items-center gap-2 px-5 py-3"
+            onClick={() => setOpenModal(true)}
+        >
+            <FiPlus />
+            Add Transaction
+        </Button>
+    }
+/>
 
       {/* Search + Filter */}
       <div className="flex flex-col gap-4 rounded-xl bg-white p-4 shadow dark:bg-slate-800 md:flex-row md:items-center md:justify-between">
 
-        <div className="relative w-full md:w-80">
+        <div className="relative w-full md:w-80 dark:text-white">
 
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-
-          <input
+          <Input
+            label=""
             type="text"
             placeholder="Search transaction..."
             value={search}
@@ -88,7 +102,6 @@ const transactions = useAppSelector(
               search: e.target.value,
               })
              }
-            className="w-full rounded-lg border border-slate-300 py-2 pl-10 pr-4 outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-white"
           />
 
         </div>
@@ -116,7 +129,7 @@ const transactions = useAppSelector(
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl bg-white shadow dark:bg-slate-800">
+      <WorkspaceCard className="overflow-x-auto">
 
         <table className="min-w-full">
 
@@ -214,7 +227,7 @@ const transactions = useAppSelector(
 
         </table>
 
-      </div>
+      </WorkspaceCard>
 
       <AddTransactionModal open={openModal} onClose={() => setOpenModal(false)} onAdd={handleAdd} />
 

@@ -1,4 +1,6 @@
 import { FiDollarSign, FiTarget, FiTrendingUp } from "react-icons/fi";
+import WorkspaceCard from "../../components/Common/WorkspaceCard";
+import PageHeader from "../../components/Common/PageHeader";
 
 type BudgetItem = {
   id: number;
@@ -61,20 +63,16 @@ const Budget = () => {
     <div className="space-y-8">
 
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold dark:text-white">
-          Budget
-        </h1>
-
-        <p className="text-slate-500">
-          Track your monthly spending and stay within budget.
-        </p>
-      </div>
+        <PageHeader
+    title=" Budget"
+    subtitle="Track your monthly spending and stay within budget.."
+     />
+      
 
       {/* Summary Cards */}
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
 
-        <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
+        <WorkspaceCard>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500">
@@ -91,9 +89,9 @@ const Budget = () => {
               className="text-blue-600"
             />
           </div>
-        </div>
+        </WorkspaceCard>
 
-        <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
+        <WorkspaceCard>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500">
@@ -110,9 +108,9 @@ const Budget = () => {
               className="text-red-500"
             />
           </div>
-        </div>
+        </WorkspaceCard>
 
-        <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
+        <WorkspaceCard>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500">
@@ -129,17 +127,12 @@ const Budget = () => {
               className="text-green-600"
             />
           </div>
-        </div>
+        </WorkspaceCard>
 
       </div>
 
       {/* Budget Categories */}
-      <div className="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
-
-        <h2 className="mb-6 text-xl font-semibold dark:text-white">
-          Monthly Budget Overview
-        </h2>
-
+      <WorkspaceCard title=" Monthly Budget Overview">
         <div className="space-y-6">
 
           {budgetData.map((item) => {
@@ -190,8 +183,7 @@ const Budget = () => {
           })}
 
         </div>
-
-      </div>
+      </WorkspaceCard>
 
     </div>
   );

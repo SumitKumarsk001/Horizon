@@ -9,6 +9,7 @@ import OverviewChart from "./components/OverviewChart";
 import BankCard from "./components/BankCard";
 import { TfiWallet } from "react-icons/tfi";
 import RecentTransactions from "./components/RecentTransactions";
+import PageHeader from "../../components/Common/PageHeader";
 
 const parseUserName = () => {
   if (typeof window === "undefined") return "";
@@ -35,15 +36,11 @@ const Dashboard = () => {
     <div className="space-y-8">
 
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold dark:text-white">
-          Dashboard
-        </h1>
-
-        <p className="mt-2 text-slate-500">
-          Welcome back! Here's your financial overview.
-        </p>
-      </div>
+    
+    <PageHeader
+    title="Dashboard"
+    subtitle="Welcome back! Here's your financial overview."
+/>
 
       {/* Stat Cards */}
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">

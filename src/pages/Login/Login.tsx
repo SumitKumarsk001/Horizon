@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link ,useNavigate} from "react-router-dom";
 import {  FiMail, FiLock } from "react-icons/fi";
-import Input from "../FormComponent/Input";
-import Button from "../FormComponent/Button";
+import Input from "../../components/FormComponent/Input";
+import Button from "../../components/FormComponent/Button";
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import { login } from "../../features/auth/authSlice";
+import { loginUser } from "../../services/authService";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,30 +38,25 @@ const Login = () => {
   }));
   };
 
- const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   if (!validateForm()) return;
 
-  // console.log("Login Successful");
-  // console.log(formData);
-
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  if (!user) {
-  alert("No account found. Please register first.");
-  return;
+  try {
+    const response = await loginUser({
+      email: formData.email,
+      password: formData.password,
+    });
+     console.log("Login Response:", response.data);
+    dispatch(login(response.data.user));
+    console.log("Redux Login Done");
+    navigate("/dashboard");
+    console.log("Navigate Called");
+  } catch (error) {
+    alert("Invalid email or password");
+    console.error(error);
   }
-  if (
-  user.email !== formData.email ||
-  user.password !== formData.password
- ) {
-  alert("Invalid email or password");
-  return;
- }
-  dispatch(login(user));
-
-  navigate("/dashboard");
-        
 };
 
 const validateForm = () => {

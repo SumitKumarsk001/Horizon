@@ -1,0 +1,75 @@
+import axios from "axios";
+
+// create api end point
+const api = axios.create({
+  baseURL: "/api",
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Request Interceptors
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    console.log("Request URL:", config.url);
+    console.log("Request Method:", config.method);
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response Interceptors
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+
+  (error) => {
+      if (!error.response) {
+    console.error("Network Error");
+    return Promise.reject(error);
+  }
+    const status = error.response.status;
+
+    switch (status) {
+      case 400:
+        console.error("Bad Request");
+        break;
+
+      case 401:
+        console.error("Unauthorized");
+
+        localStorage.removeItem("token");
+
+        window.location.href = "/login";
+        break;
+
+      case 403:
+        console.error("Forbidden");
+        break;
+
+      case 404:
+        console.error("Not Found");
+        break;
+
+      case 500:
+        console.error("Internal Server Error");
+        break;
+
+      default:
+        console.error("Something went wrong");
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;

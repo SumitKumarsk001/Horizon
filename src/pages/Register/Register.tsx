@@ -6,10 +6,11 @@ import {
   FiPhone,
   FiLock,
 } from "react-icons/fi";
-import Input from "../FormComponent/Input";
-import Button from "../FormComponent/Button";
+import Input from "../../components/FormComponent/Input";
+import Button from "../../components/FormComponent/Button";
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import { login } from "../../features/auth/authSlice";
+import { registerUser } from "../../services/authService";
 
 
 const Register = () => {
@@ -20,7 +21,6 @@ const Register = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    profileImage: "" as string,
   });
   const [errors, setErrors] = useState({
   firstName: "",
@@ -29,7 +29,7 @@ const Register = () => {
   phone: "",
   password: "",
   confirmPassword: "",
-  profileImage: "",
+ 
  });
 
 const navigate = useNavigate();
@@ -38,36 +38,7 @@ const dispatch = useAppDispatch();
 const handleChange = (
   e: React.ChangeEvent<HTMLInputElement>
 ) => {
-  const { name, value, files } = e.target;
-
-  if (name === "profileImage") {
-    const file = files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setErrors((prev) => ({
-        ...prev,
-        profileImage: "Only image files are allowed",
-      }));
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFormData((prev) => ({
-        ...prev,
-        profileImage: reader.result as string,
-      }));
-    };
-    reader.readAsDataURL(file);
-
-    setErrors((prev) => ({
-      ...prev,
-      profileImage: "",
-    }));
-
-    return;
-  }
+   const { name, value } = e.target;
 
   setFormData((prev) => ({
     ...prev,
@@ -80,33 +51,31 @@ const handleChange = (
   }));
 };
 
-  const handleSubmit = (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
   if (!validateForm()) return;
 
-  console.log("Registration Successful");
-  console.log(formData);
-
-  // Save a serializable user object to localStorage
-  const userToStore = {
-    firstName: formData.firstName,
-    lastName: formData.lastName,
-    email: formData.email,
-    phone: formData.phone,
-    password: formData.password,
-  };
-  const existingUser = JSON.parse(localStorage.getItem("user") || "null");
-
-  if (existingUser && existingUser.email === formData.email) {
-  alert("This email is already registered.");
-  return;
-}
-
-  dispatch(login(userToStore));
-
-  // Go to home page
-  navigate("/dashboard");
+  try {
+    const response = await registerUser({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+    });
+   //console.log('form data response'+response);
+   
+    dispatch(login(response.data.user));
+     //console.log("dispatch"+dispatch);
+     
+    navigate("/dashboard");
+    //console.log('navigate to'+navigate);
+    
+  } catch (error) {
+    alert("Email already exists");
+    console.error(error);
+  }
 };
 
   const validateForm = () => {
@@ -117,7 +86,6 @@ const handleChange = (
     phone: "",
     password: "",
     confirmPassword: "",
-    profileImage: "",
   };
 
   let isValid = true;
@@ -172,8 +140,6 @@ const handleChange = (
     isValid = false;
   }
 
-  // Profile Image (Optional)
-  // We already validate file type when the image is selected.
 
   setErrors(newErrors);
 

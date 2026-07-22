@@ -20,24 +20,7 @@ const navigate = useNavigate();
 const filteredPages = sidebarItems.filter((item) =>
   item.title.toLowerCase().includes(search.toLowerCase())
 );
-  // State to manage theme (light/dark)
-  // const [theme, setTheme] = useState(() => {
-  // return localStorage.getItem("theme") || "light";
-  // }); 
-
-  // const toggleTheme = () => {
-  // const newTheme = theme === "light" ? "dark" : "light";
-
-  // setTheme(newTheme);
-
-  // localStorage.setItem("theme", newTheme);
-
-  // if (newTheme === "dark") {
-  //   document.documentElement.classList.add("dark");
-  // } else {
-  //   document.documentElement.classList.remove("dark");
-  // }
-  // };
+ 
 
   const dispatch = useAppDispatch();
 

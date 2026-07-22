@@ -4,17 +4,11 @@ import {
   FiShoppingBag,
   FiCreditCard,
 } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../../../hooks/reduxHooks";
+import type { Transaction } from "../../../features/transactions/transactionSlice";
 
-type Transaction = {
-  id: number;
-  title: string;
-  category: string;
-  date: string;
-  amount: number;
-  status: "Income" | "Expense";
-};
-
-const transactions: Transaction[] = [
+const defaultTransactions: Transaction[] = [
   {
     id: 1,
     title: "Salary",
@@ -71,6 +65,21 @@ const getIcon = (category: string) => {
 };
 
 const RecentTransactions = () => {
+  const transactions = useAppSelector(
+    (state) => state.transactions.transactions
+  );
+
+  const sortedTransactions = (
+    transactions.length ? transactions : defaultTransactions
+  )
+    .slice()
+    .sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+
+      return dateB - dateA;
+    });
+
   return (
     <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
       {/* Header */}
@@ -85,9 +94,12 @@ const RecentTransactions = () => {
           </p>
         </div>
 
-        <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm transition hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700 dark:text-white">
+        <Link
+          to="/dashboard/transactions"
+          className="rounded-lg border border-slate-300 px-4 py-2 text-sm transition hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700 dark:text-white"
+        >
           View All
-        </button>
+        </Link>
       </div>
 
       {/* Desktop Table */}
@@ -103,7 +115,7 @@ const RecentTransactions = () => {
           </thead>
 
           <tbody>
-            {transactions.map((item) => (
+            {sortedTransactions.map((item) => (
               <tr
                 key={item.id}
                 className="border-b border-slate-100 dark:border-slate-700"
@@ -153,7 +165,7 @@ const RecentTransactions = () => {
 
       {/* Mobile Cards */}
       <div className="space-y-4 lg:hidden">
-        {transactions.map((item) => (
+        {sortedTransactions.map((item) => (
           <div
             key={item.id}
             className="flex items-center justify-between rounded-xl border border-slate-200 p-4 dark:border-slate-700"
