@@ -85,9 +85,10 @@ DashboardLayout
     └── Outlet
             │
             ├── Dashboard
+            |--- Card 
             ├── Transactions
             ├── Analytics
-            ├── Wallet
+            ├── Budget
             └── Settings
 ```
 
@@ -551,46 +552,7 @@ Implemented:
 - Search transactions
 - Filter transactions
 - User-specific transaction management
-
----
-
-### 🔹 Loading State
-
-Created reusable loading component.
-
-Features:
-
-- Spinner
-- Center aligned
-- Reusable across pages
-
-Used in:
-
-- Cards
-- Transactions
-- Dashboard
-
----
-
-### 🔹 Empty State
-
-Created reusable Empty State component.
-
-Displays messages like:
-
-```
-No Cards Found
-
-Click "Add Card" to create your first card.
-```
-
-```
-No Transactions Found
-
-Click "Add Transaction" to get started.
-```
-
----
+-----  
 
 ### 🔹 LocalStorage Synchronization
 
@@ -661,8 +623,7 @@ src/
 │   ├── Common/
 │   │   ├── WorkspaceCard.tsx
 │   │   ├── PageHeader.tsx
-│   │   ├── LoadingState.tsx
-│   │   └── EmptyState.tsx
+
 │   └── FormComponent/
 │
 └── pages/
@@ -679,7 +640,6 @@ src/
 - User-specific mock database
 - LocalStorage synchronization
 - Reusable component design
-- Managing loading and empty states
 - Cleaner project structure
 
 ---
