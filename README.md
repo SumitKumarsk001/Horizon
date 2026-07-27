@@ -791,6 +791,153 @@ Day 6 focused on optimizing API request handling by implementing request cancell
 - Verified that only the latest API response updates the UI.
 
 ---
+# 📅 Project Horizon - Day 7
+
+## Overview
+
+Day 7 focused on improving the application's reliability, resilience, and user experience by implementing localized error handling, offline data persistence, automatic synchronization, and a high-performance global toast notification system.
+
+---
+
+## Tasks Completed
+
+### FE-13.1 | Granular Error Boundary Trees & Offline Persistence
+
+#### Localized Error Boundaries
+
+- Implemented React Error Boundaries for individual UI sections.
+- Prevented a single component failure from crashing the entire application.
+- Added recovery actions including:
+  - **Try Again**
+  - **Reset Section**
+- Improved application fault tolerance and user experience.
+
+#### Offline Persistence
+
+- Integrated **IndexedDB** using **localForage/idb**.
+- Cached form inputs and state changes locally when the network was unavailable.
+- Prevented data loss during offline sessions.
+
+#### Automatic Data Synchronization
+
+- Added network status listeners using the browser's **online/offline** events.
+- Automatically synchronized queued offline actions once the internet connection was restored.
+- Ensured seamless recovery without requiring user intervention.
+
+---
+
+## FE-13.3 | Real-Time Toast Event Bus Architecture
+
+### Global Toast Notification System
+
+- Designed a lightweight Pub-Sub (Event Bus) architecture.
+- Created a decoupled event emitter for toast notifications.
+- Mounted a single `ToastContainer` component that independently subscribes to toast events.
+- Triggered notifications without causing unnecessary re-renders of parent components.
+
+### Toast Features
+
+- Success notifications
+- Error notifications
+- Warning notifications
+- Information notifications
+- Decoupled event-driven architecture
+- High-performance rendering
+
+---
+
+## Technologies Used
+
+- React.js
+- TypeScript
+- Tailwind CSS
+- IndexedDB
+- localForage / idb
+- React Error Boundaries
+- Browser Online/Offline API
+- Custom Event Emitter (Pub-Sub Pattern)
+- Vite
+
+---
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── ErrorBoundary/
+│   │   ├── ErrorBoundary.tsx
+│
+├── services/
+│   ├── offlineStorage.ts
+│
+├── hooks/
+│   └── useOfflineSync.ts
+│
+
+```
+
+---
+
+## Key Features
+
+- Granular Error Boundary architecture
+- Component-level crash recovery
+- Offline data persistence using IndexedDB
+- Automatic synchronization after reconnecting
+- Event-driven global toast notifications
+- High-performance rendering
+- Fault-tolerant application design
+- Improved user experience during network interruptions
+
+---
+
+## Learning Outcomes
+
+- Implementing React Error Boundaries
+- Building resilient React applications
+- Using IndexedDB for offline storage
+- Handling online/offline browser events
+- Designing an Event Bus using the Pub-Sub pattern
+- Creating decoupled UI communication
+- Optimizing rendering performance
+- Improving application fault tolerance
+
+---
+
+## Testing & Verification
+
+### Error Boundary Testing
+
+- Simulated component crashes.
+- Verified that only the affected section displayed the fallback UI.
+- Confirmed the rest of the application remained functional.
+
+### Offline Persistence Testing
+
+- Disabled network using Chrome DevTools.
+- Submitted form inputs while offline.
+- Verified data was stored in IndexedDB.
+- Re-enabled network and confirmed queued actions synchronized automatically.
+
+### Toast Event Bus Testing
+
+- Triggered success, error, warning, and info notifications.
+- Confirmed notifications appeared instantly.
+- Verified no unnecessary re-renders occurred in parent components.
+
+---
+
+## Benefits
+
+- Prevents entire application crashes.
+- Ensures no user data is lost during network interruptions.
+- Automatically restores pending operations when connectivity returns.
+- Improves scalability with decoupled architecture.
+- Provides fast and efficient user feedback through global toast notifications.
+
+---
+
 
 # 👨‍💻 Developed By
 
