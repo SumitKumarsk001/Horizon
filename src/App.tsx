@@ -11,23 +11,38 @@ import Transactions from './pages/Transactions/Transactions'
 import Analytics from './pages/Analytics/Analytics'
 import Budget from './pages/Budget.tsx/Budget'
 import Settings from './pages/Settings-Page/Settings'
+import { useAppSelector } from './hooks/reduxHooks'
 
 function App() {
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+  const isLoggedIn = useAppSelector(
+    (state) => state.auth.isLoggedIn
+  );
+
   return (
     <BrowserRouter>
       <Routes>
+
         <Route
           path="/"
-          element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
+          element={
+            isLoggedIn
+              ? <Navigate to="/dashboard" replace />
+              : <Navigate to="/login" replace />
+          }
         />
 
         <Route path="/login" element={<Login />} />
+
         <Route path="/register" element={<Register />} />
 
         <Route
           path="/dashboard"
-          element={isLoggedIn ? <DashboardLayout /> : <Navigate to="/login" replace />}
+          element={
+            isLoggedIn
+              ? <DashboardLayout />
+              : <Navigate to="/login" replace />
+          }
         >
           <Route index element={<Dashboard />} />
           <Route path="cards" element={<Cards />} />
@@ -36,9 +51,10 @@ function App() {
           <Route path="budget" element={<Budget />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
 export default App

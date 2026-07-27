@@ -9,46 +9,46 @@ import { useAppSelector } from "../../../hooks/reduxHooks";
 import type { Transaction } from "../../../features/transactions/transactionSlice";
 
 const defaultTransactions: Transaction[] = [
-  {
-    id: 1,
-    title: "Salary",
-    category: "Income",
-    date: "15 Jul 2026",
-    amount: 2500,
-    status: "Income",
-  },
-  {
-    id: 2,
-    title: "Netflix",
-    category: "Subscription",
-    date: "14 Jul 2026",
-    amount: -15,
-    status: "Expense",
-  },
-  {
-    id: 3,
-    title: "Amazon",
-    category: "Shopping",
-    date: "13 Jul 2026",
-    amount: -125,
-    status: "Expense",
-  },
-  {
-    id: 4,
-    title: "Freelance",
-    category: "Income",
-    date: "12 Jul 2026",
-    amount: 800,
-    status: "Income",
-  },
-  {
-    id: 5,
-    title: "Electricity",
-    category: "Bills",
-    date: "11 Jul 2026",
-    amount: -65,
-    status: "Expense",
-  },
+  // {
+  //   id: 1,
+  //   title: "Salary",
+  //   category: "Income",
+  //   date: "15 Jul 2026",
+  //   amount: 2500,
+  //   status: "Income",
+  // },
+  // {
+  //   id: 2,
+  //   title: "Netflix",
+  //   category: "Subscription",
+  //   date: "14 Jul 2026",
+  //   amount: -15,
+  //   status: "Expense",
+  // },
+  // {
+  //   id: 3,
+  //   title: "Amazon",
+  //   category: "Shopping",
+  //   date: "13 Jul 2026",
+  //   amount: -125,
+  //   status: "Expense",
+  // },
+  // {
+  //   id: 4,
+  //   title: "Freelance",
+  //   category: "Income",
+  //   date: "12 Jul 2026",
+  //   amount: 800,
+  //   status: "Income",
+  // },
+  // {
+  //   id: 5,
+  //   title: "Electricity",
+  //   category: "Bills",
+  //   date: "11 Jul 2026",
+  //   amount: -65,
+  //   status: "Expense",
+  // },
 ];
 
 const getIcon = (category: string) => {

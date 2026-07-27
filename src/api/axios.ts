@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 // create api end point
 const api = axios.create({
@@ -53,7 +54,7 @@ api.interceptors.response.use(
         break;
 
       case 403:
-        console.error("Forbidden");
+        toast.error("You don't have permission.");
         break;
 
       case 404:

@@ -1,9 +1,8 @@
 import {
   FiPlus,
   //FiTrash2,
-  FiWifi,
 } from "react-icons/fi";
-import { FaCcMastercard } from "react-icons/fa";
+
 import {  useState,useEffect } from "react";
 import AddCardModal from "./AddCardModal";
 import Button from "../../components/FormComponent/Button";
@@ -11,8 +10,11 @@ import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { addCard,setCards,} from "../../features/cards/cardSlice";
 import type { Card} from "../../features/cards/cardSlice";
 import { getCardsApi, addCardsApi, } from "../../services/cardService";
-import WorkspaceCard from "../../components/Common/WorkspaceCard";
 import PageHeader from "../../components/Common/PageHeader";
+import { toast } from "react-toastify";
+import ErrorBoundary from "../../components/Common/ErrorBoundary";
+import CardItem from "./CardItems";
+import SummaryCards from "./SummaryCards";
 
 
 
@@ -32,18 +34,7 @@ const parseUserName = () => {
   }
 };
 
-const maskCardNumber = (value: string) => {
-  const digits = value.replace(/\D/g, "");
-  const visibleCount = 4;
-  const maskedDigits = digits
-    .split("")
-    .map((digit, index) =>
-      index >= digits.length - visibleCount ? digit : "*"
-    );
 
-  let digitIndex = 0;
-  return value.replace(/\d/g, () => maskedDigits[digitIndex++] || "*");
-};
 
 const Cards = () => {
   const userName = parseUserName() || "Card Holder";
@@ -74,8 +65,9 @@ const Cards = () => {
     const response = await addCardsApi(card,userEmail);
 
     dispatch(addCard(response.data));
-
+    
     setOpen(false);
+    toast.success("Card Add Successfully");
   } catch (error) {
     console.error(error);
   }
@@ -95,6 +87,8 @@ const Cards = () => {
   //     console.error("Failed to delete card from API, local delete still applied:", error);
   //   }
   // };
+
+  
 
   return (
     <div className="space-y-8">
@@ -128,92 +122,22 @@ const Cards = () => {
        />
 
       {/* Cards Grid */}
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 ">
-        {Array.isArray(cards) ? cards.map((card) => (
-          <div
-            key={card.id}
-            className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${card.color} p-6 text-white shadow-lg h-full`}
-          >
-            {/* Decorative Circles */}
-            <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10" />
-            <div className="absolute -bottom-12 -left-10 h-28 w-28 rounded-full bg-white/10" />
-
-            {/*Card Header */}
-            <div className="relative flex items-center justify-between">
-              <FiWifi size={24} className="rotate-90" />
-
-              {/* <div className="flex items-center gap-2">
-               <Button
-                  type="button"
-                  variant="secondary"
-                  className="rounded-md "
-                  onClick={() => {
-                    setEditingCard(card);
-                    setOpen(true);
-                  }}
-                >
-                  <FiEdit size={10} />
-                </Button> 
-
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="rounded-md "
-                  onClick={() => handleDeleteCard(card.id)}
-                >
-                  <FiTrash2 size={10} />
-                </Button>
-              </div> */}
-            </div>
-
-            {/* Balance */}
-            <div className="relative mt-8">
-              <p className="text-sm text-white/80">Available Balance</p>
-
-              <h2 className="mt-2 text-3xl font-bold">{card.balance}</h2>
-            </div>
-
-            {/* Card Number */}
-            <div className="relative mt-8">
-              <p className="tracking-[0.3em] text-lg font-semibold">
-                {maskCardNumber(card.number)}
-              </p>
-            </div>
-
-            {/* Footer */}
-            <div className="relative mt-8 flex items-end justify-between">
-              <div>
-                <p className="text-xs uppercase text-white/70">Card Holder</p>
-
-                <h3 className="mt-1 font-semibold">{card.holder || userName}</h3>
-              </div>
-
-              <div>
-                <p className="text-xs uppercase text-white/70">Expiry</p>
-
-                <h3 className="mt-1 font-semibold">{card.expiry}</h3>
-              </div>
-
-              <FaCcMastercard size={42} />
-            </div>
-          </div>
-        )) : null}
-      </div>
-
+     <ErrorBoundary>
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    {cards.map((card) => (
+      <CardItem
+        key={card.id}
+        card={card}
+        userName={userName}
+      />
+    ))}
+     </div>
+     </ErrorBoundary>
+     
       {/* Summary Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <WorkspaceCard title="Total Cards" length={cards.length} children/>
-        
-
-        <WorkspaceCard title="Active Cards" length={cards.length} children/>
-          
-
-        <WorkspaceCard  title="Monthly Spending">
-          <p className="mt-4 text-4xl font-bold text-red-500">
-            $2,480
-          </p>
-        </WorkspaceCard>
-      </div>
+     <ErrorBoundary>
+  <SummaryCards cards={cards} />
+    </ErrorBoundary>
     </div>
   );
 };

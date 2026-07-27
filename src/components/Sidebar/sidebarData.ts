@@ -9,7 +9,8 @@ import {
   FiSettings,
 } from "react-icons/fi";
 
-export const sidebarItems = [
+
+export const sidebarItems  = [
   {
     title: "Dashboard",
     path: "/dashboard",

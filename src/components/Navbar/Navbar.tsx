@@ -1,10 +1,12 @@
 
 import { FiSearch, FiBell, FiMoon ,FiSun,FiSidebar} from "react-icons/fi";
-import { sidebarItems } from "../Sidebar/sidebarData";
+import { sidebarItems, } from "../Sidebar/sidebarData";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { toggleTheme } from "../../features/theme/themeSlice";
+import { searchPagesApi,} from "../../services/searchService";
+import axios from "axios";
 
 type NavbarProps = {
   onMenuClick: () => void;
@@ -14,14 +16,16 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
 
 const [search, setSearch] = useState("");
 const [showResult, setShowResult] = useState(false);
+const [filteredPages, setFilteredPages] = useState(sidebarItems);
+
+const controllerRef = useRef<AbortController | null>(null);
 
 const navigate = useNavigate();
 
-const filteredPages = sidebarItems.filter((item) =>
-  item.title.toLowerCase().includes(search.toLowerCase())
-);
+// const filteredPages = sidebarItems.filter((item) =>
+//   item.title.toLowerCase().includes(search.toLowerCase())
+// );
  
-
   const dispatch = useAppDispatch();
 
   const theme = useAppSelector((state) => state.theme.mode);
@@ -33,6 +37,36 @@ const filteredPages = sidebarItems.filter((item) =>
     document.documentElement.classList.remove("dark");
   }
    }, [theme]);
+  
+  useEffect(() => {
+  if (!search.trim()) {
+    return;
+  }
+
+  const fetchResults = async () => {
+    try {
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      const newController = new AbortController();
+      controllerRef.current=newController;
+
+      const response = await searchPagesApi(
+        search,
+        newController.signal
+      );
+
+      setFilteredPages(response.data);
+    } catch (error) {
+  if (axios.isCancel(error)) {
+    return; // Ignore cancelled requests
+  }
+    }
+  };
+
+  fetchResults();
+}, [search]); 
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200 shadow-sm transition-colors duration-300 dark:bg-slate-900 dark:border-slate-700 text-slate-900 dark:text-slate-200">

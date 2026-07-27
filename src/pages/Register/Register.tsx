@@ -11,6 +11,8 @@ import Button from "../../components/FormComponent/Button";
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import { login } from "../../features/auth/authSlice";
 import { registerUser } from "../../services/authService";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 
 const Register = () => {
@@ -70,12 +72,21 @@ const handleChange = (
      //console.log("dispatch"+dispatch);
      
     navigate("/dashboard");
+    toast.success("Account Created Successfully");
     //console.log('navigate to'+navigate);
     
   } catch (error) {
-    alert("Email already exists");
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 400) {
+      setErrors((prev) => ({
+        ...prev,
+        email: error.response?.data.message,
+      }));
+    }
+  } else {
     console.error(error);
   }
+}
 };
 
   const validateForm = () => {

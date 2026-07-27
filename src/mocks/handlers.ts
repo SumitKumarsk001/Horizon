@@ -1,6 +1,7 @@
 import { http, HttpResponse, delay } from "msw";
-import { users, cardsDB, transactionsDB } from "./data";
-
+import { users} from "./data";
+import { sidebarItems } from "../components/Sidebar/sidebarData";
+import { cardsStorage, transactionsStorage } from "../hooks/useOfflineSync";
 
 type LoginRequest = {
   email: string;
@@ -68,17 +69,17 @@ export const handlers = [
     
     const body = (await request.json()) as RegisterRequest;
     
-  console.log("Register Request:", body);
-  console.log("Current Users:", users);
+  // console.log("Register Request:", body);
+  // console.log("Current Users:", users);
+  // const email = body.email.trim().toLowerCase();
   
-    const email = body.email.trim().toLowerCase();
     const existingUser = users.find(
     (u) => u.email === body.email
   );
     
-console.log("Normalized email:", email);
-console.log("Existing User:", existingUser);
-console.log("Will return 400?", !!existingUser);
+// console.log("Normalized email:", email);
+// console.log("Existing User:", existingUser);
+// console.log("Will return 400?", !!existingUser);
   
   if (existingUser) {
     return HttpResponse.json(
@@ -95,7 +96,8 @@ console.log("Will return 400?", !!existingUser);
      ...body,
     };
 
-  users.push(newUser);
+  await cardsStorage.setItem(newUser.email, []);
+  await transactionsStorage.setItem(newUser.email, []);
 
   return HttpResponse.json({
   success: true,
@@ -115,7 +117,9 @@ http.get("/api/cards", async ({ request }) => {
     return HttpResponse.json([], { status: 200 });
   }
 
-  return HttpResponse.json(cardsDB[email] || []);
+ const cards = (await cardsStorage.getItem<CardRequest[]>(email)) || [];
+
+return HttpResponse.json(cards);
 }),
 // ----> POST Cards
 http.post("/api/cards", async ({ request }) => {
@@ -132,13 +136,14 @@ http.post("/api/cards", async ({ request }) => {
 
   const card = (await request.json()) as CardRequest;
 
-  if (!cardsDB[email]) {
-    cardsDB[email] = [];
-  }
+  const cards =
+  (await cardsStorage.getItem<CardRequest[]>(email)) || [];
 
-  cardsDB[email].push(card);
+    cards.push(card);
 
-  return HttpResponse.json(card);
+   await cardsStorage.setItem(email, cards);
+
+    return HttpResponse.json(card);
 }),
 //---> DELETE Cards
 http.delete("/api/cards/:id", async ({ params,request }) => {
@@ -155,7 +160,7 @@ if (!email) {
 
 const cardId = Number(params.id);
 
-const userCards = cardsDB[email] || [];
+const userCards =(await cardsStorage.getItem<CardRequest[]>(email)) || [];
 
 const index = userCards.findIndex(
   (card) => card.id === cardId
@@ -169,13 +174,14 @@ if (index === -1) {
 }
 
 userCards.splice(index, 1);
-
+await cardsStorage.setItem(email, userCards);
 return HttpResponse.json({ success: true });
   }),
 
   // Transactions
-  //----> GET Transactions
-  http.get("/api/transactions", async ({ request }) => {
+  
+  // ----> GET Transactions
+http.get("/api/transactions", async ({ request }) => {
   await delay(800);
 
   const email = request.headers.get("x-user-email");
@@ -184,9 +190,32 @@ return HttpResponse.json({ success: true });
     return HttpResponse.json([], { status: 200 });
   }
 
-  return HttpResponse.json(
-    transactionsDB[email] || []
-  );
+  const url = new URL(request.url);
+
+  const search =
+    url.searchParams.get("search")?.toLowerCase() || "";
+
+  const filter =
+    url.searchParams.get("filter") || "All";
+
+  let transactions =
+  (await transactionsStorage.getItem<TransactionRequest[]>(email)) || [];
+
+  // Search
+  if (search) {
+    transactions = transactions.filter((transaction) =>
+      transaction.title.toLowerCase().includes(search)
+    );
+  }
+
+  // Filter
+  if (filter !== "All") {
+    transactions = transactions.filter(
+      (transaction) => transaction.status === filter
+    );
+  }
+
+  return HttpResponse.json(transactions);
 }),
 //----> POST Transactions 
 http.post("/api/transactions", async ({ request }) => {
@@ -204,13 +233,33 @@ http.post("/api/transactions", async ({ request }) => {
   const transaction =
     (await request.json()) as TransactionRequest;
 
-  if (!transactionsDB[email]) {
-    transactionsDB[email] = [];
-  }
+  const transactions =
+  (await transactionsStorage.getItem<TransactionRequest[]>(email)) || [];
 
-  transactionsDB[email].unshift(transaction);
+   transactions.unshift(transaction);
+
+   await transactionsStorage.setItem(email, transactions);
 
   return HttpResponse.json(transaction);
 })
+,
+
+// API-based Search
+http.get("/api/search", async ({ request }) => {
+
+    await delay(500);
+
+    const url = new URL(request.url);
+
+    const query =
+        url.searchParams.get("q")?.toLowerCase() || "";
+
+    const results = sidebarItems.filter(item =>
+        item.title.toLowerCase().includes(query)
+    );
+
+    return HttpResponse.json(results);
+})
+,
 
 ]

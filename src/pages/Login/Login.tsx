@@ -6,6 +6,8 @@ import Button from "../../components/FormComponent/Button";
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import { login } from "../../features/auth/authSlice";
 import { loginUser } from "../../services/authService";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,15 +50,24 @@ const handleSubmit = async (e: React.FormEvent) => {
       email: formData.email,
       password: formData.password,
     });
-     console.log("Login Response:", response.data);
+    //  console.log("Login Response:", response.data);
     dispatch(login(response.data.user));
-    console.log("Redux Login Done");
+    // console.log("Redux Login Done");
     navigate("/dashboard");
-    console.log("Navigate Called");
+    toast.success("Account Login Successfully");
+    // console.log("Navigate Called");
   } catch (error) {
-    alert("Invalid email or password");
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 400) {
+      setErrors((prev) => ({
+        ...prev,
+        email: error.response?.data.message,
+      }));
+    }
+  } else {
     console.error(error);
   }
+}
 };
 
 const validateForm = () => {

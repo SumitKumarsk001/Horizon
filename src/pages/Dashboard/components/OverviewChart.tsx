@@ -24,6 +24,7 @@ const data = [
 ];
 
 const OverviewChart = () => {
+  
   return (
     <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
       {/* Header */}
@@ -41,7 +42,7 @@ const OverviewChart = () => {
           This Year
         </button>
       </div>
-
+    
       {/* Chart */}
       <div className="h-72 md:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">

@@ -24,9 +24,10 @@ const WorkspaceCard = ({
                 <p className="mt-4 text-4xl font-bold text-green-600">
                     {length}
                 </p>
-            ):<p className="mt-4 text-4xl font-bold text-green-600">
+            ):<p className="mt-4 text-4xl font-bold text-blue-600">
                     {length}
-                </p>}
+                </p>
+            }
 
             {children}
         </div>

@@ -6,7 +6,7 @@ import {
   FiPlus,
 } from "react-icons/fi";
 import AddTransactionModal from "./AddTransactionModal";
-import { useState,useEffect } from "react";
+import { useState,useEffect, useRef } from "react";
 import Button from "../../components/FormComponent/Button";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { addTransaction ,setTransactions} from "../../features/transactions/transactionSlice";
@@ -15,6 +15,10 @@ import {getTransactionsApi,addTransactionApi,} from "../../services/transactionS
 import WorkspaceCard from "../../components/Common/WorkspaceCard";
 import Input from "../../components/FormComponent/Input";
 import PageHeader from "../../components/Common/PageHeader";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { saveOfflineTransaction } from "../../services/offlineStorage";
+import { useOfflineSync } from "../../hooks/useOfflineSync";
 
 const Transactions = () => {
  const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +27,8 @@ const Transactions = () => {
  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
  const userEmail = currentUser.email;
 
+ useOfflineSync(userEmail);
+
  const dispatch = useAppDispatch();
 
 const transactions = useAppSelector(
@@ -30,41 +36,99 @@ const transactions = useAppSelector(
 );
 
  const [openModal, setOpenModal] = useState(false);
+ const controllerRef = useRef<AbortController | null>(null);
 
  useEffect(() => {
-   
+
   const fetchTransactions = async () => {
+
     try {
-      const response = await getTransactionsApi(userEmail);
+
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+
+      controllerRef.current = controller;
+
+      const response = await getTransactionsApi(
+        userEmail,
+        search,
+        filter,
+        controller.signal
+      );
 
       dispatch(setTransactions(response.data));
+
     } catch (error) {
-      console.error(error);
+  if (axios.isCancel(error)) {
+    return; // Ignore cancelled requests
+  }
+
     }
+
   };
 
   fetchTransactions();
-}, [dispatch]);
 
-  const filteredTransactions = transactions.filter((item) => {
-    const matchesSearch = item.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesFilter =
-      filter === "All" ? true : item.status === filter;
-    return matchesSearch && matchesFilter;
-  });
+}, [search, filter, userEmail, dispatch]);
 
- const handleAdd = async (transaction: Transaction) => {
+  // const filteredTransactions = transactions.filter((item) => {
+  //   const matchesSearch = item.title
+  //     .toLowerCase()
+  //     .includes(search.toLowerCase());
+  //   const matchesFilter =
+  //     filter === "All" ? true : item.status === filter;
+  //   return matchesSearch && matchesFilter;
+  // });
+
+//  const handleAdd = async (transaction: Transaction) => {
+//   try {
+//     const response = await addTransactionApi(transaction,userEmail);
+
+//     dispatch(addTransaction(response.data));
+
+//     setOpenModal(false);
+//     toast.success("Transaction Add Successfully");
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+const handleAdd = async (transaction: Transaction) => {
+
+  if (!navigator.onLine) {
+
+    await saveOfflineTransaction(transaction);
+
+    dispatch(addTransaction(transaction));
+
+    toast.success("Saved offline");
+
+    setOpenModal(false);
+
+    return;
+  }
+
   try {
-    const response = await addTransactionApi(transaction,userEmail);
+
+    const response = await addTransactionApi(
+      transaction,
+      userEmail
+    );
 
     dispatch(addTransaction(response.data));
 
+    toast.success("Transaction Added");
+
     setOpenModal(false);
+
   } catch (error) {
+
     console.error(error);
+
   }
+
 };
 
   return (
@@ -100,6 +164,7 @@ const transactions = useAppSelector(
             onChange={(e) =>
                setSearchParams({
               search: e.target.value,
+              filter,
               })
              }
           />
@@ -155,7 +220,7 @@ const transactions = useAppSelector(
 
           <tbody>
 
-            {filteredTransactions.map((item) => (
+            {transactions.map((item) => (
               <tr
                 key={item.id}
                 className="border-b last:border-none hover:bg-slate-50 dark:hover:bg-slate-700"

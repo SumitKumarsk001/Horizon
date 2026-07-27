@@ -13,6 +13,8 @@ import {
 } from "recharts";
 import WorkspaceCard from "../../components/Common/WorkspaceCard";
 import PageHeader from "../../components/Common/PageHeader";
+import { getStoredTransactions } from "../../services/offlineStorage";
+import { useEffect, useState } from "react";
 
 const COLORS = [
   "#2563eb",
@@ -24,19 +26,46 @@ const COLORS = [
 ];
 
 const Analytics = () => {
-  // derive data from stored transactions
-  let stored: { amount:number; status:string; category:string; date:string }[] = [];
-  try {
-    const s = localStorage.getItem("transactions");
-    if (s) stored = JSON.parse(s);
-  } catch (e) { console.error(e); }
 
-  const totalIncome = stored.filter((t) => t.status === "Income").reduce((s, t) => s + (t.amount||0), 0);
-  const totalExpense = stored.filter((t) => t.status === "Expense").reduce((s, t) => s + (t.amount||0), 0);
+  const [transactions, setTransactions] = useState<
+  {
+    amount: number;
+    status: string;
+    category: string;
+    date: string;
+  }[]
+>([]);
+  // derive data from stored transactions
+  // let stored: { amount:number; status:string; category:string; date:string }[] = [];
+  // try {
+  //   const s = localStorage.getItem("transactions");
+  //   if (s) stored = JSON.parse(s);
+  // } catch (e) { console.error(e); }
+
+  useEffect(() => {
+  const fetchTransactions = async () => {
+    const currentUser = JSON.parse(
+      localStorage.getItem("user") || "{}"
+    );
+
+    const email = currentUser.email;
+
+    const data = await getStoredTransactions(email);
+
+    console.log("Analytics Transactions:", data);
+
+    setTransactions(data);
+  };
+
+  fetchTransactions();
+}, []);
+
+  const totalIncome = transactions.filter((t) => t.status === "Income").reduce((s, t) => s + (t.amount||0), 0);
+  const totalExpense = transactions.filter((t) => t.status === "Expense").reduce((s, t) => s + (t.amount||0), 0);
   const savings = totalIncome - totalExpense;
 
   const categoryMap: Record<string, number> = {};
-  stored.filter((t) => t.status === "Expense").forEach((t) => {
+  transactions.filter((t) => t.status === "Expense").forEach((t) => {
     categoryMap[t.category] = (categoryMap[t.category] || 0) + (t.amount || 0);
   });
 
@@ -45,7 +74,7 @@ const Analytics = () => {
   // simple monthly aggregation for last 6 months
   const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const lineData = months.slice(0,6).map((m) => ({ month: m, income: 0, expense: 0 }));
-  stored.forEach((t) => {
+  transactions.forEach((t) => {
     const d = new Date(t.date);
     if (!isNaN(d.getTime())) {
       const m = d.getMonth();
