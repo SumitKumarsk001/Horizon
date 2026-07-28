@@ -85,9 +85,10 @@ DashboardLayout
     └── Outlet
             │
             ├── Dashboard
+            |--- Card 
             ├── Transactions
             ├── Analytics
-            ├── Wallet
+            ├── Budget
             └── Settings
 ```
 
@@ -551,46 +552,7 @@ Implemented:
 - Search transactions
 - Filter transactions
 - User-specific transaction management
-
----
-
-### 🔹 Loading State
-
-Created reusable loading component.
-
-Features:
-
-- Spinner
-- Center aligned
-- Reusable across pages
-
-Used in:
-
-- Cards
-- Transactions
-- Dashboard
-
----
-
-### 🔹 Empty State
-
-Created reusable Empty State component.
-
-Displays messages like:
-
-```
-No Cards Found
-
-Click "Add Card" to create your first card.
-```
-
-```
-No Transactions Found
-
-Click "Add Transaction" to get started.
-```
-
----
+-----  
 
 ### 🔹 LocalStorage Synchronization
 
@@ -661,8 +623,7 @@ src/
 │   ├── Common/
 │   │   ├── WorkspaceCard.tsx
 │   │   ├── PageHeader.tsx
-│   │   ├── LoadingState.tsx
-│   │   └── EmptyState.tsx
+
 │   └── FormComponent/
 │
 └── pages/
@@ -679,7 +640,6 @@ src/
 - User-specific mock database
 - LocalStorage synchronization
 - Reusable component design
-- Managing loading and empty states
 - Cleaner project structure
 
 ---
@@ -694,7 +654,251 @@ By the end of Day 6:
 - ✔ Loading and Empty states improve user experience.
 - ✔ Application structure is more scalable and maintainable.
 
+--- 
+# 📅 update FE-12.4  - Day 6
+
+## Overview
+
+Day 6 focused on optimizing API request handling by implementing request cancellation using the **AbortController API**. This enhancement prevents race conditions and ensures that only the latest API response updates the user interface, improving performance and user experience.
+
 ---
+
+## Tasks Completed
+
+### Request Cancellation
+
+- Implemented `AbortController` for API requests.
+- Aborted previous in-flight requests before sending a new one.
+- Prevented stale API responses from updating the UI.
+- Handled rapid user interactions efficiently.
+
+### Search Optimization
+
+- Supported fast typing in search inputs.
+- Ensured only the latest search request was processed.
+- Eliminated outdated search results.
+
+### Network Request Management
+
+- Cancelled previous requests when users quickly switched tabs or triggered multiple requests.
+- Improved application responsiveness.
+- Reduced unnecessary network traffic.
+
+### Testing
+
+- Verified request cancellation using Chrome DevTools.
+- Confirmed cancelled requests appear with **(canceled)** status in the Network tab.
+- Tested rapid consecutive API calls to ensure only the latest response was rendered.
+
+---
+
+## Technologies Used
+
+- React.js
+- TypeScript
+- Axios
+- AbortController API
+- Vite
+
+---
+
+## Implementation
+
+### Key Features
+
+- Request cancellation using `AbortController`
+- Prevention of race conditions
+- Improved API performance
+- Better user experience during rapid interactions
+- Efficient network resource utilization
+
+### Workflow
+
+1. User triggers an API request.
+2. If another request is initiated before the previous one completes:
+   - Abort the previous request.
+   - Start a new request with a fresh `AbortController`.
+3. Only the latest successful response updates the application state.
+4. Cancelled requests are ignored safely without affecting the UI.
+
+---
+
+## Benefits
+
+- Prevents stale or outdated data from appearing.
+- Improves application responsiveness.
+- Optimizes network usage.
+- Reduces unnecessary server requests.
+- Enhances overall user experience.
+
+---
+
+## Learning Outcomes
+
+- Understanding asynchronous request handling.
+- Using the AbortController API.
+- Preventing race conditions in React applications.
+- Managing concurrent API requests.
+- Handling request cancellation with Axios and Fetch APIs.
+- Debugging network requests using Chrome DevTools.
+
+---
+
+## Verification
+
+- Triggered multiple rapid requests.
+- Observed previous requests marked as **(canceled)** in Chrome DevTools → Network tab.
+- Verified that only the latest API response updates the UI.
+
+---
+# 📅 Project Horizon - Day 7
+
+## Overview
+
+Day 7 focused on improving the application's reliability, resilience, and user experience by implementing localized error handling, offline data persistence, automatic synchronization, and a high-performance global toast notification system.
+
+---
+
+## Tasks Completed
+
+### FE-13.1 | Granular Error Boundary Trees & Offline Persistence
+
+#### Localized Error Boundaries
+
+- Implemented React Error Boundaries for individual UI sections.
+- Prevented a single component failure from crashing the entire application.
+- Added recovery actions including:
+  - **Try Again**
+  - **Reset Section**
+- Improved application fault tolerance and user experience.
+
+#### Offline Persistence
+
+- Integrated **IndexedDB** using **localForage/idb**.
+- Cached form inputs and state changes locally when the network was unavailable.
+- Prevented data loss during offline sessions.
+
+#### Automatic Data Synchronization
+
+- Added network status listeners using the browser's **online/offline** events.
+- Automatically synchronized queued offline actions once the internet connection was restored.
+- Ensured seamless recovery without requiring user intervention.
+
+---
+
+## FE-13.3 | Real-Time Toast Event Bus Architecture
+
+### Global Toast Notification System
+
+- Designed a lightweight Pub-Sub (Event Bus) architecture.
+- Created a decoupled event emitter for toast notifications.
+- Mounted a single `ToastContainer` component that independently subscribes to toast events.
+- Triggered notifications without causing unnecessary re-renders of parent components.
+
+### Toast Features
+
+- Success notifications
+- Error notifications
+- Warning notifications
+- Information notifications
+- Decoupled event-driven architecture
+- High-performance rendering
+
+---
+
+## Technologies Used
+
+- React.js
+- TypeScript
+- Tailwind CSS
+- IndexedDB
+- localForage / idb
+- React Error Boundaries
+- Browser Online/Offline API
+- Custom Event Emitter (Pub-Sub Pattern)
+- Vite
+
+---
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── ErrorBoundary/
+│   │   ├── ErrorBoundary.tsx
+│
+├── services/
+│   ├── offlineStorage.ts
+│
+├── hooks/
+│   └── useOfflineSync.ts
+│
+
+```
+
+---
+
+## Key Features
+
+- Granular Error Boundary architecture
+- Component-level crash recovery
+- Offline data persistence using IndexedDB
+- Automatic synchronization after reconnecting
+- Event-driven global toast notifications
+- High-performance rendering
+- Fault-tolerant application design
+- Improved user experience during network interruptions
+
+---
+
+## Learning Outcomes
+
+- Implementing React Error Boundaries
+- Building resilient React applications
+- Using IndexedDB for offline storage
+- Handling online/offline browser events
+- Designing an Event Bus using the Pub-Sub pattern
+- Creating decoupled UI communication
+- Optimizing rendering performance
+- Improving application fault tolerance
+
+---
+
+## Testing & Verification
+
+### Error Boundary Testing
+
+- Simulated component crashes.
+- Verified that only the affected section displayed the fallback UI.
+- Confirmed the rest of the application remained functional.
+
+### Offline Persistence Testing
+
+- Disabled network using Chrome DevTools.
+- Submitted form inputs while offline.
+- Verified data was stored in IndexedDB.
+- Re-enabled network and confirmed queued actions synchronized automatically.
+
+### Toast Event Bus Testing
+
+- Triggered success, error, warning, and info notifications.
+- Confirmed notifications appeared instantly.
+- Verified no unnecessary re-renders occurred in parent components.
+
+---
+
+## Benefits
+
+- Prevents entire application crashes.
+- Ensures no user data is lost during network interruptions.
+- Automatically restores pending operations when connectivity returns.
+- Improves scalability with decoupled architecture.
+- Provides fast and efficient user feedback through global toast notifications.
+
+---
+
+
 # 👨‍💻 Developed By
 
 **Sumit Kumar**
