@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
+
 // create api end point
 const api = axios.create({
   baseURL: "/api",
@@ -19,8 +20,8 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    console.log("Request URL:", config.url);
-    console.log("Request Method:", config.method);
+   // console.log("Request URL:", config.url);
+    //console.log("Request Method:", config.method);
 
     return config;
   },

@@ -20,7 +20,9 @@ enableMocking().then(() => {
 ReactDOM.createRoot(document.getElementById('root')!).render(
  
     <Provider store={store}>
+      
       <App />
+     
        <ToastContainer
         position="top-right"
         autoClose={3000}

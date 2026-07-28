@@ -1,6 +1,8 @@
 import { FiDollarSign, FiTarget, FiTrendingUp } from "react-icons/fi";
 import WorkspaceCard from "../../components/Common/WorkspaceCard";
 import PageHeader from "../../components/Common/PageHeader";
+import OfflineFallback from "../../components/Common/OfflineFallback";
+import useNetworkStatus from "../../hooks/useNetworkStatus";
 
 type BudgetItem = {
   id: number;
@@ -58,6 +60,15 @@ const Budget = () => {
     const totalBudget = budgetData.reduce((sum, item) => sum + item.budget, 0);
     const totalSpent = budgetData.reduce((sum, item) => sum + spentByCategory(item.category), 0);
     const remaining = totalBudget - totalSpent;
+
+    const online = useNetworkStatus();
+    if (!online) {
+  return (
+    <OfflineFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
 
   return (
     <div className="space-y-8">
@@ -118,7 +129,7 @@ const Budget = () => {
               </p>
 
               <h2 className="mt-2 text-3xl font-bold text-green-600">
-                ${remaining}
+                ${-remaining}
               </h2>
             </div>
 

@@ -19,6 +19,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { saveOfflineTransaction } from "../../services/offlineStorage";
 import { useOfflineSync } from "../../hooks/useOfflineSync";
+import OfflineFallback from "../../components/Common/OfflineFallback";
+import useNetworkStatus from "../../hooks/useNetworkStatus";
+import ErrorFallback from "../../components/Common/ErrorFallback";
 
 const Transactions = () => {
  const [searchParams, setSearchParams] = useSearchParams();
@@ -28,7 +31,7 @@ const Transactions = () => {
  const userEmail = currentUser.email;
 
  useOfflineSync(userEmail);
-
+ 
  const dispatch = useAppDispatch();
 
 const transactions = useAppSelector(
@@ -37,64 +40,50 @@ const transactions = useAppSelector(
 
  const [openModal, setOpenModal] = useState(false);
  const controllerRef = useRef<AbortController | null>(null);
+ const [apiError, setApiError] = useState(false);
 
  useEffect(() => {
 
   const fetchTransactions = async () => {
 
-    try {
+   setApiError(false);
 
-      if (controllerRef.current) {
-        controllerRef.current.abort();
-      }
+   try {
 
-      const controller = new AbortController();
-
-      controllerRef.current = controller;
-
-      const response = await getTransactionsApi(
-        userEmail,
-        search,
-        filter,
-        controller.signal
-      );
-
-      dispatch(setTransactions(response.data));
-
-    } catch (error) {
-  if (axios.isCancel(error)) {
-    return; // Ignore cancelled requests
+  if (controllerRef.current) {
+    controllerRef.current.abort();
   }
 
-    }
+  const controller = new AbortController();
 
+  controllerRef.current = controller;
+
+  const response = await getTransactionsApi(
+    userEmail,
+    search,
+    filter,
+    controller.signal
+  );
+
+  dispatch(setTransactions(response.data));
+
+ } catch (error) {
+
+  if (axios.isCancel(error)) {
+    return;
+  }
+
+  console.error(error);
+
+  setApiError(true);
+
+ } 
   };
 
   fetchTransactions();
-
 }, [search, filter, userEmail, dispatch]);
 
-  // const filteredTransactions = transactions.filter((item) => {
-  //   const matchesSearch = item.title
-  //     .toLowerCase()
-  //     .includes(search.toLowerCase());
-  //   const matchesFilter =
-  //     filter === "All" ? true : item.status === filter;
-  //   return matchesSearch && matchesFilter;
-  // });
-
-//  const handleAdd = async (transaction: Transaction) => {
-//   try {
-//     const response = await addTransactionApi(transaction,userEmail);
-
-//     dispatch(addTransaction(response.data));
-
-//     setOpenModal(false);
-//     toast.success("Transaction Add Successfully");
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
+ 
 const handleAdd = async (transaction: Transaction) => {
 
   if (!navigator.onLine) {
@@ -130,6 +119,22 @@ const handleAdd = async (transaction: Transaction) => {
   }
 
 };
+
+ const online = useNetworkStatus();
+ if (!online) {
+  return (
+    <OfflineFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
+if (apiError) {
+  return (
+    <ErrorFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
 
   return (
     <div className="space-y-6">

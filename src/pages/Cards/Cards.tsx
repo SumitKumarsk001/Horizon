@@ -15,6 +15,9 @@ import { toast } from "react-toastify";
 import ErrorBoundary from "../../components/Common/ErrorBoundary";
 import CardItem from "./CardItems";
 import SummaryCards from "./SummaryCards";
+import OfflineFallback from "../../components/Common/OfflineFallback";
+import useNetworkStatus from "../../hooks/useNetworkStatus";
+import ErrorFallback from "../../components/Common/ErrorFallback";
 
 
 
@@ -45,19 +48,25 @@ const Cards = () => {
 
   const [open, setOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Card | null>(null);
+  const [apiError, setApiError] =useState(false);
 
  useEffect(() => {
 
-  const fetchCards = async () => {
-    try {
-      const response = await getCardsApi(userEmail);
-      dispatch(setCards(response.data));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+ const fetchCards = async () => {
+  setApiError(false);
 
-  fetchCards();
+  try {
+    const response = await getCardsApi(userEmail);
+
+    dispatch(setCards(response.data));
+  } catch (error) {
+    console.error(error);
+
+    setApiError(true);
+  }
+};
+
+fetchCards();
 }, [dispatch]);
 
   const handleAddCard = async (card: Card) => {
@@ -88,8 +97,22 @@ const Cards = () => {
   //   }
   // };
 
-  
-
+ const online = useNetworkStatus();
+ if (!online) {
+  return (
+    <OfflineFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+} 
+if (apiError) {
+  return (
+    <ErrorFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
+ 
   return (
     <div className="space-y-8">
       {/* Header */}

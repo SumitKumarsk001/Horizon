@@ -11,6 +11,8 @@ import { TfiWallet } from "react-icons/tfi";
 import RecentTransactions from "./components/RecentTransactions";
 import PageHeader from "../../components/Common/PageHeader";
 import ErrorBoundary from "../../components/Common/ErrorBoundary";
+import OfflineFallback from "../../components/Common/OfflineFallback";
+import useNetworkStatus from "../../hooks/useNetworkStatus";
 
 const parseUserName = () => {
   if (typeof window === "undefined") return "";
@@ -32,6 +34,15 @@ const parseUserName = () => {
 
 const Dashboard = () => {
   const userName = parseUserName() || "Card Holder";
+
+  const online = useNetworkStatus();
+  if (!online) {
+  return (
+    <OfflineFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
 
   return (
     <div className="space-y-8">

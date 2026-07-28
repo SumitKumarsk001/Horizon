@@ -13,8 +13,10 @@ import {
 } from "recharts";
 import WorkspaceCard from "../../components/Common/WorkspaceCard";
 import PageHeader from "../../components/Common/PageHeader";
-import { getStoredTransactions } from "../../services/offlineStorage";
 import { useEffect, useState } from "react";
+import { getStoredTransactions } from "../../services/offlineStorage";
+import OfflineFallback from "../../components/Common/OfflineFallback";
+import useNetworkStatus from "../../hooks/useNetworkStatus";
 
 const COLORS = [
   "#2563eb",
@@ -42,7 +44,7 @@ const Analytics = () => {
   //   if (s) stored = JSON.parse(s);
   // } catch (e) { console.error(e); }
 
-  useEffect(() => {
+ useEffect(() => {
   const fetchTransactions = async () => {
     const currentUser = JSON.parse(
       localStorage.getItem("user") || "{}"
@@ -52,13 +54,12 @@ const Analytics = () => {
 
     const data = await getStoredTransactions(email);
 
-    console.log("Analytics Transactions:", data);
-
     setTransactions(data);
   };
 
   fetchTransactions();
 }, []);
+   
 
   const totalIncome = transactions.filter((t) => t.status === "Income").reduce((s, t) => s + (t.amount||0), 0);
   const totalExpense = transactions.filter((t) => t.status === "Expense").reduce((s, t) => s + (t.amount||0), 0);
@@ -85,6 +86,15 @@ const Analytics = () => {
       }
     }
   });
+
+  const online = useNetworkStatus();
+  if (!online) {
+  return (
+    <OfflineFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
 
   return (
     <div className="space-y-8">

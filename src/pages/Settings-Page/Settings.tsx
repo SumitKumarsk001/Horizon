@@ -4,6 +4,8 @@ import Input from "../../components/FormComponent/Input";
 import Button from "../../components/FormComponent/Button";
 import WorkspaceCard from "../../components/Common/WorkspaceCard";
 import PageHeader from "../../components/Common/PageHeader";
+import OfflineFallback from "../../components/Common/OfflineFallback";
+import useNetworkStatus from "../../hooks/useNetworkStatus";
 
 type User = {
   firstName: string;
@@ -100,6 +102,14 @@ const Settings = () => {
     alert("Profile Updated Successfully");
   };
 
+  const online = useNetworkStatus();
+  if (!online) {
+  return (
+    <OfflineFallback
+      onRetry={() => window.location.reload()}
+    />
+  );
+}
   return (
     <div className="space-y-8">
 
