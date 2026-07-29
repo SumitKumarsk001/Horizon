@@ -1,7 +1,7 @@
 import { http, HttpResponse, delay } from "msw";
-import { users} from "./data";
 import { sidebarItems } from "../components/Sidebar/sidebarData";
-import { cardsStorage, transactionsStorage } from "../hooks/useOfflineSync";
+import { usersStorage,cardsStorage, transactionsStorage } from "../hooks/useOfflineSync";
+import type { User } from "../features/auth/authSlice";
 
 type LoginRequest = {
   email: string;
@@ -43,10 +43,14 @@ export const handlers = [
 
     const body = (await request.json()) as LoginRequest;
    
-    const user = users.find((u) => 
-      u.email === body.email &&
-      u.password === body.password
-    );
+   const users =
+  (await usersStorage.getItem<User[]>("users")) || [];
+
+const user = users.find(
+  (u) =>
+    u.email === body.email &&
+    u.password === body.password
+);
   
 
     if (!user) {
@@ -69,17 +73,15 @@ export const handlers = [
     
     const body = (await request.json()) as RegisterRequest;
     
-  // console.log("Register Request:", body);
-  // console.log("Current Users:", users);
-  // const email = body.email.trim().toLowerCase();
   
-    const existingUser = users.find(
-    (u) => u.email === body.email
+  
+   const users =
+  (await usersStorage.getItem<User[]>("users")) || [];
+
+  const existingUser = users.find(
+  (u) => u.email === body.email
   );
     
-// console.log("Normalized email:", email);
-// console.log("Existing User:", existingUser);
-// console.log("Will return 400?", !!existingUser);
   
   if (existingUser) {
     return HttpResponse.json(
@@ -95,7 +97,8 @@ export const handlers = [
     id: Date.now(),
      ...body,
     };
-
+    users.push(newUser);
+  await usersStorage.setItem("users", users);
   await cardsStorage.setItem(newUser.email, []);
   await transactionsStorage.setItem(newUser.email, []);
 

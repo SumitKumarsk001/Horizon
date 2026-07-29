@@ -34,6 +34,10 @@ export const useOfflineSync = (email: string) => {
   }, [email]);
 
 };
+export const usersStorage = localforage.createInstance({
+  name: "Horizon",
+  storeName: "users",
+});
 
 export const cardsStorage = localforage.createInstance({
   name: "Horizon",
