@@ -896,6 +896,188 @@ src/
 - Improves scalability with decoupled architecture.
 - Provides fast and efficient user feedback through global toast notifications.
 
+# DAY 7: Fault Tolerance, Performance Optimization & API Stability
+
+## FE-13.4 | Crash Simulation & Verification
+
+### Objective
+Ensure the application remains usable during network failures or backend crashes by displaying meaningful fallback UIs instead of a blank screen.
+
+### Implementation
+- Created a reusable **OfflineFallback** component for network connectivity issues.
+- Created a reusable **ErrorFallback** component for API/server failures.
+- Used a custom `useNetworkStatus` hook to detect browser online/offline status.
+- Displayed:
+  - **OfflineFallback** when the browser has no internet connection.
+  - **ErrorFallback** when API requests fail (HTTP 500, server unavailable, etc.).
+- Added a Retry button to reload the page and retry failed requests.
+
+### Verification
+#### Offline Simulation
+- Open Chrome DevTools → **Network**
+- Change **No Throttling** → **Offline**
+- Refresh the page.
+- Verified that the application displays:
+  ```
+  You are offline
+  [ Retry ]
+  ```
+
+#### Backend Crash Simulation
+- Modified MSW handlers to temporarily return:
+  ```ts
+  return HttpResponse.json(
+      { message: "Server Error" },
+      { status: 500 }
+  );
+  ```
+- Refreshed the page.
+- Verified that the application displays:
+  ```
+  Something went wrong
+  [ Retry ]
+  ```
+
+---
+
+# FE-14.1 | Custom Debouncer Hook
+
+## Objective
+Reduce unnecessary API requests while the user is typing into the search field.
+
+## Implementation
+Created a reusable custom hook:
+
+- `useDebounce`
+
+### Features
+- Delays API execution by **500ms**
+- Prevents one API request per keystroke
+- Sends only one request after typing stops
+
+### Example
+
+Without Debounce
+
+```
+r
+re
+rea
+reac
+react
+
+5 API Requests
+```
+
+With Debounce
+
+```
+r
+re
+rea
+reac
+react
+
+(wait 500ms)
+
+1 API Request
+```
+
+### Benefits
+- Lower server load
+- Faster UI
+- Better user experience
+- Cleaner network traffic
+
+---
+
+# FE-14.4 | Traffic Profiling & Event Disposal
+
+## Objective
+Prevent duplicate API requests and eliminate memory leaks caused by unused event listeners.
+
+## Implementation
+
+### Prevented Duplicate API Requests
+
+- Used **AbortController** to cancel previous requests during rapid searches.
+- Ensured only the latest request is processed.
+
+Example:
+
+```ts
+if (controllerRef.current) {
+    controllerRef.current.abort();
+}
+```
+
+---
+
+### Cleaned Event Listeners
+
+Properly removed listeners inside `useEffect`.
+
+Example:
+
+```ts
+useEffect(() => {
+    window.addEventListener("online", sync);
+
+    return () => {
+        window.removeEventListener("online", sync);
+    };
+}, []);
+```
+
+This prevents:
+
+- Memory leaks
+- Duplicate event execution
+- Multiple API calls
+
+---
+
+## Outcome
+
+### Reliability
+- Graceful handling of offline mode.
+- Graceful handling of backend crashes.
+- No blank screens.
+
+### Performance
+- Search API requests reduced significantly.
+- Previous requests cancelled automatically.
+- Network traffic optimized.
+
+### Stability
+- Event listeners cleaned up properly.
+- No duplicate API requests.
+- Reduced unnecessary component re-renders.
+
+---
+
+## Technologies Used
+
+- React
+- TypeScript
+- Axios
+- MSW (Mock Service Worker)
+- Custom Hooks
+- AbortController
+- React Router
+- React Toastify
+
+---
+
+## Deliverables
+
+- ✅ Offline Fallback UI
+- ✅ API Error Fallback UI
+- ✅ Crash Simulation Testing
+- ✅ Custom `useDebounce` Hook
+- ✅ AbortController Integration
+- ✅ Proper Event Listener Cleanup
+- ✅ Optimized API Traffic
 ---
 
 
