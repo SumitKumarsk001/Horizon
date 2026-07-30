@@ -1,16 +1,15 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate, } from 'react-router-dom'
-
-import './App.css'
-import DashboardLayout from './layouts/DashboardLayout'
-import './styles/globals.css'
-import Login from './pages/Login/Login'
-import Register from './pages/Register/Register'
-import Dashboard from './pages/Dashboard/Dashboard'
-import Cards from './pages/Cards/Cards'
-import Transactions from './pages/Transactions/Transactions'
-import Analytics from './pages/Analytics/Analytics'
-import Budget from './pages/Budget.tsx/Budget'
-import Settings from './pages/Settings-Page/Settings'
+const Login = lazy(() => import("./pages/Login/Login"));
+const Register = lazy(() => import("./pages/Register/Register"));
+const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
+const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
+const Cards = lazy(() => import("./pages/Cards/Cards"));
+const Transactions = lazy(() => import("./pages/Transactions/Transactions"));
+const Analytics = lazy(() => import("./pages/Analytics/Analytics"));
+const Budget = lazy(() => import("./pages/Budget.tsx/Budget"));
+const Settings = lazy(() => import("./pages/Settings-Page/Settings"));
+import PageSkeleton from "./components/Skeleton/PageSkeleton";
 import { useAppSelector } from './hooks/reduxHooks'
 
 function App() {
@@ -21,6 +20,7 @@ function App() {
 
   return (
     <BrowserRouter>
+    <Suspense fallback={<PageSkeleton/>}>
       <Routes>
 
         <Route
@@ -53,6 +53,7 @@ function App() {
         </Route>
 
       </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

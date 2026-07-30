@@ -50,12 +50,12 @@ const handleSubmit = async (e: React.FormEvent) => {
       email: formData.email,
       password: formData.password,
     });
-    //  console.log("Login Response:", response.data);
+   
     dispatch(login(response.data.user));
-    // console.log("Redux Login Done");
+  
     navigate("/dashboard");
     toast.success("Account Login Successfully");
-    // console.log("Navigate Called");
+    
   } catch (error) {
   if (axios.isAxiosError(error)) {
     if (error.response?.status === 400) {

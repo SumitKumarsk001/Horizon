@@ -1,6 +1,5 @@
 import {
   FiPlus,
-  //FiTrash2,
 } from "react-icons/fi";
 
 import {  useState,useEffect } from "react";
@@ -67,7 +66,7 @@ const Cards = () => {
 };
 
 fetchCards();
-}, [dispatch]);
+}, [dispatch,userEmail]);
 
   const handleAddCard = async (card: Card) => {
   try {
@@ -81,21 +80,6 @@ fetchCards();
     console.error(error);
   }
 };
-
-  // const handleUpdateCard = (card: Card) => {
-  //    dispatch(updateCard(card));
-  // setEditingCard(null);
-  // };
-
-  // const handleDeleteCard = async (id: Card["id"]) => {
-  //   dispatch(deleteCard(id));
-
-  //   try {
-  //     await deleteCardApi(id);
-  //   } catch (error) {
-  //     console.error("Failed to delete card from API, local delete still applied:", error);
-  //   }
-  // };
 
  const online = useNetworkStatus();
  if (!online) {
@@ -141,7 +125,6 @@ if (apiError) {
          setEditingCard(null);
        }}
        onAdd={handleAddCard}
-        //onUpdate={handleUpdateCard}
        />
 
       {/* Cards Grid */}

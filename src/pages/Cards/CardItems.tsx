@@ -24,9 +24,6 @@ const maskCardNumber = (value: string) => {
 
 const CardItem = ({ card, userName }: CardItemProps) => {
 
-  // Uncomment only for testing Error Boundary
-  // throw new Error("Testing Card Error Boundary");
-
   return (
     <div
       className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${card.color} p-6 text-white shadow-lg h-full`}

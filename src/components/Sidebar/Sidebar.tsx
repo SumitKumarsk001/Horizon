@@ -1,10 +1,9 @@
-
-
 import { NavLink,useNavigate } from "react-router-dom";
 import { sidebarItems } from "./sidebarData";
 import { FiLogOut } from "react-icons/fi";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import profileImage from '../../assets/profile-img.jpg'
 
 type SidebarProps = {
   isOpen: boolean;
@@ -59,9 +58,6 @@ const Sidebar = ({ isOpen, mobileOpen, onClose }: SidebarProps) => {
    const handleLogout = () => {
     // Remove login session
     localStorage.removeItem("isLoggedIn");
-
-    // Optional: Remove user data
-    // localStorage.removeItem("user");
 
     // Redirect to login page
     navigate("/login");
@@ -134,7 +130,7 @@ const Sidebar = ({ isOpen, mobileOpen, onClose }: SidebarProps) => {
             <div className="flex items-center justify-between gap-4 rounded-xl bg-blue-600 px-3 py-3">
               <div className="flex items-center gap-3">
                 <img
-                  src={user?.profileImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgl6XLGmKN4GX1drT9TmSldDW2TZCpG2p3tEIiJWY7QQ&s=10"}
+                  src={user?.profileImage || profileImage}
                   alt="User"
                   className="h-10 w-10 rounded-full"
                 />

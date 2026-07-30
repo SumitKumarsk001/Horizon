@@ -6,8 +6,7 @@ interface SummaryCardsProps {
 }
 
 const SummaryCards = ({ cards }: SummaryCardsProps) => {
-  // Uncomment only for testing
-  //throw new Error("Summary Cards crashed");
+  
 
   return (
     <div className="grid gap-6 md:grid-cols-3">

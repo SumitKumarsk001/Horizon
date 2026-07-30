@@ -6,7 +6,7 @@ import WorkspaceCard from "../../components/Common/WorkspaceCard";
 import PageHeader from "../../components/Common/PageHeader";
 import OfflineFallback from "../../components/Common/OfflineFallback";
 import useNetworkStatus from "../../hooks/useNetworkStatus";
-
+import profileImage from '../../assets/profile-img.jpg';
 type User = {
   firstName: string;
   lastName: string;
@@ -127,7 +127,7 @@ const Settings = () => {
           <img
             src={
               user.profileImage ||
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgl6XLGmKN4GX1drT9TmSldDW2TZCpG2p3tEIiJWY7QQ&s=10"
+              profileImage
             }
             alt="Profile"
             className="h-20 w-20 rounded-full"

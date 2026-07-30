@@ -21,10 +21,6 @@ const [filteredPages, setFilteredPages] = useState(sidebarItems);
 const controllerRef = useRef<AbortController | null>(null);
 
 const navigate = useNavigate();
-
-// const filteredPages = sidebarItems.filter((item) =>
-//   item.title.toLowerCase().includes(search.toLowerCase())
-// );
  
   const dispatch = useAppDispatch();
 

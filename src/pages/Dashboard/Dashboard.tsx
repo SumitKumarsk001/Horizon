@@ -30,8 +30,6 @@ const parseUserName = () => {
   }
 };
 
-
-
 const Dashboard = () => {
   const userName = parseUserName() || "Card Holder";
 

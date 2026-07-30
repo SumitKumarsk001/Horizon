@@ -37,12 +37,7 @@ const Analytics = () => {
     date: string;
   }[]
 >([]);
-  // derive data from stored transactions
-  // let stored: { amount:number; status:string; category:string; date:string }[] = [];
-  // try {
-  //   const s = localStorage.getItem("transactions");
-  //   if (s) stored = JSON.parse(s);
-  // } catch (e) { console.error(e); }
+ 
 
  useEffect(() => {
   const fetchTransactions = async () => {

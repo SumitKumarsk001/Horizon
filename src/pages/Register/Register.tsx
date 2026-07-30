@@ -66,15 +66,11 @@ const handleChange = (
       phone: formData.phone,
       password: formData.password,
     });
-   //console.log('form data response'+response);
    
     dispatch(login(response.data.user));
-     //console.log("dispatch"+dispatch);
      
     navigate("/dashboard");
     toast.success("Account Created Successfully");
-    //console.log('navigate to'+navigate);
-    
   } catch (error) {
   if (axios.isAxiosError(error)) {
     if (error.response?.status === 400) {

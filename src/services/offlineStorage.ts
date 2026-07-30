@@ -1,37 +1,12 @@
-// import localforage from "localforage";
-// import type { Transaction } from "../features/transactions/transactionSlice";
 
-// export const offlineDB = localforage.createInstance({
-//   name: "HorizonDB",
-// });
-
-// export const saveOfflineTransaction = async (transaction: Transaction) => {
-//   const queue =
-//     (await offlineDB.getItem<Transaction[]>("transactionQueue")) || [];
-
-//   queue.push(transaction);
-
-//   await offlineDB.setItem("transactionQueue", queue);
-// };
-
-// export const getOfflineTransactions = async () => {
-//   return (
-//     (await offlineDB.getItem<Transaction[]>("transactionQueue")) || []
-//   );
-// };
-
-// export const clearOfflineTransactions = async () => {
-//   await offlineDB.removeItem("transactionQueue");
-// };
 
 
 import localforage from "localforage";
 import type { Transaction } from "../features/transactions/transactionSlice";
 import type { Card } from "../features/cards/cardSlice";
 
-// -------------------------
-// Offline Queue (KEEP THIS)
-// -------------------------
+
+// Offline Queue 
 
 export const offlineDB = localforage.createInstance({
   name: "HorizonDB",
@@ -58,9 +33,8 @@ export const clearOfflineTransactions = async () => {
   await offlineDB.removeItem("transactionQueue");
 };
 
-// ---------------------------------------------------
-// IndexedDB Storage (ADD THIS)
-// ---------------------------------------------------
+
+// IndexedDB Storage 
 
 export const transactionsStorage = localforage.createInstance({
   name: "Horizon",

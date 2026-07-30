@@ -1,9 +1,6 @@
 import { useEffect } from "react";
 import localforage from "localforage";
-import {
-  getOfflineTransactions,
-  clearOfflineTransactions,
-} from "../services/offlineStorage";
+import {getOfflineTransactions,clearOfflineTransactions} from "../services/offlineStorage";
 import { addTransactionApi } from "../services/transactionService";
 import type { Transaction } from "../features/transactions/transactionSlice";
 

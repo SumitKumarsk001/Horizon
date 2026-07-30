@@ -20,9 +20,6 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-   // console.log("Request URL:", config.url);
-    //console.log("Request Method:", config.method);
-
     return config;
   },
   (error) => Promise.reject(error)

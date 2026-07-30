@@ -124,16 +124,7 @@ http.get("/api/cards", async ({ request }) => {
 
 return HttpResponse.json(cards);
 }),
-// http.get("/api/cards", async () => {  // this is for testing when API crash
-//   return HttpResponse.json(
-//     {
-//       message: "Server Error",
-//     },
-//     {
-//       status: 500,
-//     }
-//   );
-// }),
+
 // ----> POST Cards
 http.post("/api/cards", async ({ request }) => {
   await delay(800);
@@ -230,16 +221,7 @@ http.get("/api/transactions", async ({ request }) => {
 
   return HttpResponse.json(transactions);
 }),
-// http.get("/api/transactions", async () => {  // this is for testing when API crash
-//   return HttpResponse.json(
-//     {
-//       message: "Server Error",
-//     },
-//     {
-//       status: 500,
-//     }
-//   );
-// }),
+
 //----> POST Transactions 
 http.post("/api/transactions", async ({ request }) => {
   await delay(800);
